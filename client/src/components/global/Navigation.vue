@@ -5,7 +5,7 @@
         </div>
         <div class = "menu">
             <div v-for="(item, i) in menu" v-bind:key = "i" class = "item" >
-                <router-link to = "/route1">{{item.caption}}</router-link>
+                <router-link :to = "item.link">{{item.caption}}</router-link>
             </div>
         </div>
 
@@ -27,8 +27,8 @@ export default{
     data(){
         return{
             menu : [
-                {link : '#', caption : 'Home'},
-                {link : '#', caption : 'Courses'},
+                {link : '/', caption : 'Home'},
+                {link : '/course', caption : 'Courses'},
                 {link : '#', caption : 'challenges'},
                 {link : '#', caption : 'Playground'},
                 {link : '#', caption : 'Blog'}
