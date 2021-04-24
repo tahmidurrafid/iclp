@@ -3,4 +3,6 @@ Rhythm:
         Courses List Page
     Todo:
 
-    
+Shukti:
+    Todo:  
+	Course Details  
