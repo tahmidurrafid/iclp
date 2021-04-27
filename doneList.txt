@@ -4,5 +4,8 @@ Rhythm:
     Todo:
 
 Shukti:
+    Done:
+	Course Details 
     Todo:  
-	Course Details  
+	Create Thread
+	 

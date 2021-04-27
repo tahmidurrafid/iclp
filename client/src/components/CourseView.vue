@@ -42,7 +42,7 @@
                             </div>
                         </div>
                         <div class = "line">
-                            <router-link class = "button" to = "#">SEE DETAILS</router-link>
+                            <router-link class = "button" to = "/course/details">SEE DETAILS</router-link>
                         </div>
                     </div>
                 </div>
