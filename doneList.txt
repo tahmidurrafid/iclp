@@ -6,6 +6,7 @@ Rhythm:
 Shukti:
     Done:
 	Course Details 
-    Todo:  
 	Create Thread
+    Todo:  
+	
 	 

@@ -1,141 +1,144 @@
 <template>
-    <div class = "courseDetails">
-        <div class = "leftBar">
-            <div class = "item">
+    <div>
+        <div class="heading"><img src="../assets/doubleLines.png" alt="">Course Details<img class="flip" src="../assets/doubleLines.png" alt=""></div>
+        <div class = "courseDetails">
+            <div class = "leftBar">
+                <div class = "item">
+                    <div class = "wrap">
+                        <div class = "heading"><span class = "marker"></span><span class = "text">Course Type</span></div>
+                        <div class = "list">
+                            <div class = "list-item link" @click="activePart='CourseDescription'">
+                                <span>Course Description</span>
+                                <span class = "count"  v-if="activePart==='CourseDescription'"><i class="fa fa-check-circle"></i></span>
+                            </div>
+                            <div class = "list-item link" @click="activePart='CourseContents'">
+                                <span>Course Contents</span>
+                                <span class = "count"  v-if="activePart==='CourseContents'"><i class="fa fa-check-circle"></i></span>
+                            </div>
+                            <div class = "list-item link" @click="activePart='AboutInstructor'">
+                                <span>About Instructor</span>
+                                <span class = "count"  v-if="activePart==='AboutInstructor'"><i class="fa fa-check-circle"></i></span>
+                            </div>
+                            <div class = "list-item link" @click="activePart='EnrollCourse'">
+                                <span>Enroll Course</span>
+                                <span class = "count"  v-if="activePart==='EnrollCourse'"><i class="fa fa-check-circle"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class = "courseDescription" v-if="activePart==='CourseDescription'">
                 <div class = "wrap">
-                    <div class = "heading"><span class = "marker"></span><span class = "text">Course Type</span></div>
-                    <div class = "list">
-                        <div class = "list-item link" @click="activePart='CourseDescription'">
-                            <span>Course Description</span>
-                            <span class = "count"  v-if="activePart==='CourseDescription'"><i class="fa fa-check-circle"></i></span>
-                        </div>
-                        <div class = "list-item link" @click="activePart='CourseContents'">
-                            <span>Course Contents</span>
-                            <span class = "count"  v-if="activePart==='CourseContents'"><i class="fa fa-check-circle"></i></span>
-                        </div>
-                        <div class = "list-item link" @click="activePart='AboutInstructor'">
-                            <span>About Instructor</span>
-                            <span class = "count"  v-if="activePart==='AboutInstructor'"><i class="fa fa-check-circle"></i></span>
-                        </div>
-                        <div class = "list-item link" @click="activePart='EnrollCourse'">
-                            <span>Enroll Course</span>
-                            <span class = "count"  v-if="activePart==='EnrollCourse'"><i class="fa fa-check-circle"></i></span>
-                        </div>
+                    <div class = "title"><span class = "marker"></span><span class = "text">Object Oriented Programming with Java</span></div>
+                    <div class = "description">
+                        Object-Oriented programming (OOP) refers to a type of programming in which programmers define the data type of a data structure and the type of operations that can be applied to the data structure.
+                        <br>
+                        <br>
+                        As Java being the most sought-after skill, we will talk about object-oriented programming concepts in Java. An object-based application in Java is based on declaring classes, creating objects from them and interacting between these objects.<br> I have discussed Java Classes and Objects which is also a part of object-oriented programming concepts, in my previous blog.
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class = "courseDescription" v-if="activePart==='CourseDescription'">
-            <div class = "wrap">
-                <div class = "title"><span class = "marker"></span><span class = "text">Object Oriented Programming with Java</span></div>
-                <div class = "description">
-                    Object-Oriented programming (OOP) refers to a type of programming in which programmers define the data type of a data structure and the type of operations that can be applied to the data structure.
                     <br>
-                    <br>
-                    As Java being the most sought-after skill, we will talk about object-oriented programming concepts in Java. An object-based application in Java is based on declaring classes, creating objects from them and interacting between these objects.<br> I have discussed Java Classes and Objects which is also a part of object-oriented programming concepts, in my previous blog.
-                </div>
-                <br>
-                <div class = "line">
-                    <div class = "upvote">
-                        <span>378</span><i class = "fa fa-heart-o"></i>
+                    <div class = "line">
+                        <div class = "upvote">
+                            <span>378</span><i class = "fa fa-heart-o"></i>
+                        </div>
+                        <div class = "rating">
+                            <span>Rating  </span>
+                            <i v-for="n in 5" v-bind:key="n" class = "fa fa-star"></i>
+                        </div>
                     </div>
-                    <div class = "rating">
-                        <span>Rating  </span>
-                        <i v-for="n in 5" v-bind:key="n" class = "fa fa-star"></i>
-                    </div>
-                </div>
-                <table class="information">
-                    <tr class="infoitem">
-                        <td class="infotitle">Instructor</td>
-                        <td class="infodetails">Shafin Khdem</td>
-                    </tr>
-                    <tr class="infoitem">
-                        <td class="infotitle">Total time</td>
-                        <td class="infodetails">12 hours 37 minutes</td>
-                    </tr>
-                    <tr class="infoitem">
-                        <td class="infotitle">Number of quizes</td>
-                        <td class="infodetails">08</td>
-                    </tr>
-                    <tr class="infoitem">
-                        <td class="infotitle">Course Type</td>
-                        <td class="infodetails">Premium</td>
-                    </tr>
-                    <tr class="infoitem">
-                        <td class="infotitle">Number of Assignments</td>
-                        <td class="infodetails">03</td>
-                    </tr>
-                </table>
+                    <table class="information">
+                        <tr class="infoitem">
+                            <td class="infotitle">Instructor</td>
+                            <td class="infodetails">Shafin Khdem</td>
+                        </tr>
+                        <tr class="infoitem">
+                            <td class="infotitle">Total time</td>
+                            <td class="infodetails">12 hours 37 minutes</td>
+                        </tr>
+                        <tr class="infoitem">
+                            <td class="infotitle">Number of quizes</td>
+                            <td class="infodetails">08</td>
+                        </tr>
+                        <tr class="infoitem">
+                            <td class="infotitle">Course Type</td>
+                            <td class="infodetails">Premium</td>
+                        </tr>
+                        <tr class="infoitem">
+                            <td class="infotitle">Number of Assignments</td>
+                            <td class="infodetails">03</td>
+                        </tr>
+                    </table>
 
+                </div>
             </div>
-        </div>
-        <div class="courseContents" v-if="activePart==='CourseContents'">
-            <div class="wrap">
-                <div class="title"><span class="marker"></span><span class="text">Course Contents</span></div>
-                <div class="list">
-                    <div v-for = "(item, i) in courseContents" v-bind:key="i" class = "list-item" @click="item.shouldExpand=!item.shouldExpand">
-                        <div class="contentTitle">
-                            <span>{{item.title}}</span>
-                            <span class = "count" v-if="!item.shouldExpand"><i class="fa fa-chevron-circle-up"></i></span>
-                            <span class = "count" v-if="item.shouldExpand"><i class="fa fa-chevron-circle-down"></i></span>
-                        </div>
-                        <div class="sublist" v-if="item.shouldExpand"> 
-                            <div v-for = "(subitem, j) in item.sublist" v-bind:key="j" class="sub-list-item">
-                                <span>{{subitem}}</span>
+            <div class="courseContents" v-if="activePart==='CourseContents'">
+                <div class="wrap">
+                    <div class="title"><span class="marker"></span><span class="text">Course Contents</span></div>
+                    <div class="list">
+                        <div v-for = "(item, i) in courseContents" v-bind:key="i" class = "list-item" @click="item.shouldExpand=!item.shouldExpand">
+                            <div class="contentTitle">
+                                <span>{{item.title}}</span>
+                                <span class = "count" v-if="!item.shouldExpand"><i class="fa fa-chevron-circle-up"></i></span>
+                                <span class = "count" v-if="item.shouldExpand"><i class="fa fa-chevron-circle-down"></i></span>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="aboutInstructor" v-if="activePart==='AboutInstructor'">
-            <div class="wrap">
-                <div class="title"><span class="marker"></span><span class="text">About Instructor</span></div>
-                <div class="content">
-                    <div class="image">
-                        <img src="../assets/blankprofilepicture.png">
-                    </div>
-                    <div class="instructorDetails">
-                        <div class="instructorname">
-                            <div><b>Instructor</b></div>
-                            <div>Shafin Khadem</div>
-                        </div>
-                        <div class="instructorDescription">
-                            Object-Oriented programming (OOP) refers to a type of programming in which programmers define the data type of a data structure and the type of operations that can be applied to the data structure.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="enrollCourse" v-if="activePart==='EnrollCourse'">
-            <div class="wrap">
-                <div class="title"><span class="marker"></span><span class="text">Enroll Course</span></div>
-                <div class="content">
-                    <div class="enrolltext">
-                        You can enroll into this course now or save it for later.
-                    </div>
-                    <div class="buttons">
-                        <router-link to = "">
-                            <div class="enrollButton">
-                                <div>Enroll Now</div>
-                                <div>
-                                     <i class="fa fa-chevron-circle-right"></i>
+                            <div class="sublist" v-if="item.shouldExpand"> 
+                                <div v-for = "(subitem, j) in item.sublist" v-bind:key="j" class="sub-list-item">
+                                    <span>{{subitem}}</span>
                                 </div>
                             </div>
-                        </router-link>
-                        <router-link to = "">
-                            <div class="saveButton">
-                                <div>Save For Later</div>
-                                <div>
-                                     <i class="fa fa-bookmark-o"></i>
-                                </div>
-                            </div>
-                        </router-link>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="aboutInstructor" v-if="activePart==='AboutInstructor'">
+                <div class="wrap">
+                    <div class="title"><span class="marker"></span><span class="text">About Instructor</span></div>
+                    <div class="content">
+                        <div class="image">
+                            <img src="../assets/blankprofilepicture.png">
+                        </div>
+                        <div class="instructorDetails">
+                            <div class="instructorname">
+                                <div><b>Instructor</b></div>
+                                <div>Shafin Khadem</div>
+                            </div>
+                            <div class="instructorDescription">
+                                Object-Oriented programming (OOP) refers to a type of programming in which programmers define the data type of a data structure and the type of operations that can be applied to the data structure.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="enrollCourse" v-if="activePart==='EnrollCourse'">
+                <div class="wrap">
+                    <div class="title"><span class="marker"></span><span class="text">Enroll Course</span></div>
+                    <div class="content">
+                        <div class="enrolltext">
+                            You can enroll into this course now or save it for later.
+                        </div>
+                        <div class="buttons">
+                            <router-link to = "">
+                                <div class="enrollButton">
+                                    <div>Enroll Now</div>
+                                    <div>
+                                        <i class="fa fa-chevron-circle-right"></i>
+                                    </div>
+                                </div>
+                            </router-link>
+                            <router-link to = "">
+                                <div class="saveButton">
+                                    <div>Save For Later</div>
+                                    <div>
+                                        <i class="fa fa-bookmark-o"></i>
+                                    </div>
+                                </div>
+                            </router-link>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+        </div>
     </div>
 </template>
 
@@ -169,11 +172,25 @@ export default{
         width : 25px;
         background: linear-gradient(90deg, rgba(252,90,52,1) 0%, rgba(252,90,52,1) 60%, rgba(255,255,255,0) 60.1%, rgba(255,255,255,0) 80%, rgba(252,90,52,1) 80.1%);        
     }
-    .courseDetails{
+    .heading{
         padding-top: 70px;
+        font-weight: 600;
+        font-size: 29px;
+        padding-bottom: 30px;
+        text-align: center;
+        img{
+        width: 60px;
+        height: 18px;
+        padding-right: 20px;
+        }
+        .flip{
+            transform: scaleX(-1);
+        }
+    }
+    .courseDetails{
         display: flex;
         box-sizing: border-box;
-        padding : 70px 70px 0;
+        padding : 10px 70px 0;
         .leftBar{
             width : 25%;
             .item{
