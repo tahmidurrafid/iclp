@@ -5,10 +5,13 @@ Rhythm:
 
 Shukti:
     Done:
-	    Course Details
-	    Create Thread
+	Course Details
+	Create Thread
+	Instructor Courses
+	Instructor Assignments
+	Instructor Reviews
     Todo:
-    Instructor Dashboard
+    	Create Course
 
 Rabeeb:
     Done:
