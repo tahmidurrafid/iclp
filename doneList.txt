@@ -8,6 +8,7 @@ Shukti:
 	    Course Details
 	    Create Thread
     Todo:
+    Instructor Dashboard
 
 Rabeeb:
     Done:
