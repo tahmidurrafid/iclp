@@ -13,9 +13,9 @@
                             <div class = "list-item link" @click="activePart='PendingAssignments'" :style="[activePart==='PendingAssignments'?{'background-color': '#7E7978','color':'white'}:{}]">
                                 <span>Pending Assignments</span>
                             </div>
-                            <div class = "list-item link" @click="activePart='CreateNewCourse'" :style="[activePart==='CreateNewCourse'?{'background-color': '#7E7978','color':'white'}:{}]">
-                                <span>Create New Course</span>
-                            </div>
+                            <router-link to="/instructordashboard/createcourse" class = "list-item link" @click="activePart='CreateNewCourse'" :style="[activePart==='CreateNewCourse'?{'background-color': '#7E7978','color':'white'}:{}]">
+                                <span> Create New Course </span>
+                            </router-link>
                             <div class = "list-item link" @click="activePart='SeeReviews'" :style="[activePart==='SeeReviews'?{'background-color': '#7E7978','color':'white'}:{}]">
                                 <span>See Reviews</span>
                             </div>
@@ -56,25 +56,6 @@
                                 <span><i>Enrollment No : {{item.enrollmentNo}}</i></span>
                             </span>
                             <hr class="horizontalLine">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="aboutInstructor" v-if="activePart==='CreateNewCourse'">
-                <div class="wrap">
-                    <div class="title"><span class="marker"></span><span class="text">About Instructor</span></div>
-                    <div class="content">
-                        <div class="image">
-                            <img src="../assets/blankprofilepicture.png">
-                        </div>
-                        <div class="instructorDetails">
-                            <div class="instructorname">
-                                <div><b>Instructor</b></div>
-                                <div>Shafin Khadem</div>
-                            </div>
-                            <div class="instructorDescription">
-                                Object-Oriented programming (OOP) refers to a type of programming in which programmers define the data type of a data structure and the type of operations that can be applied to the data structure.
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -196,7 +177,6 @@ export default{
                             align-items: center;
                             font-size: 13px;
                             font-weight: 600;
-                            color : #828282;
                             margin : 15px 0;
                         }
                         .link{
@@ -366,57 +346,6 @@ export default{
                         }
                     }
                 }
-        }
-        .aboutInstructor{
-             text-align: left;
-            width: 70%;
-            padding : 0 0 0 50px;
-                .wrap{
-                    border: solid 3px #E9E9E9;
-                    padding : 22px 50px 22px 70px;
-                    box-sizing: border-box;
-                    .title{
-                        position : relative;
-                        .marker{
-                            position : absolute;
-                            top : calc(50% - 2px);
-                            left : -40px;
-                        }
-                        font-size: 18px;
-                        font-weight: 600;
-                        padding : 5px 0;
-                    }
-                    .content{
-                        display: flex;
-                        justify-content: space-between;
-                        margin-top: 10vh;
-                        .image{
-                            width: 30%;
-                            img{
-                                height: auto;
-                                width: 80%;
-                                border: solid 5px rgb(175, 175, 182);
-                                border-radius: 50%;
-                            }
-                        }
-                        .instructorDetails{
-                            width: 60%;
-                            .instructorname
-                            {
-                                width: 70%;
-                                display: flex;
-                                font-size: 16px;
-                                justify-content: space-between;
-
-                            }
-                            .instructorDescription{
-                                margin: 30px 0px;
-                                font-size: 14px;
-                            }
-                        }
-                    }
-                }
-
         }
         .reviews{
             text-align: left;

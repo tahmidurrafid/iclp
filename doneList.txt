@@ -10,8 +10,9 @@ Shukti:
 	Instructor Courses
 	Instructor Assignments
 	Instructor Reviews
+	Create Course
     Todo:
-    	Create Course
+    	
 
 Rabeeb:
     Done:
