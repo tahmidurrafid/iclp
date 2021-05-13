@@ -2,9 +2,10 @@ Rhythm:
     Done:
         Courses List Page
         Take Quiz        
+        Submit Assignment        
     Todo:
-        Submit Assignment
-
+        Set Quiz
+        
 Shukti:
     Done:
 	Course Details

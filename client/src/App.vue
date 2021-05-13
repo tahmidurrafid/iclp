@@ -32,7 +32,7 @@ export default {
       cursor : pointer;
   }
 
-  #app {
+  #app , input{
 
     font-family: poppins, Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
