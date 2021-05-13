@@ -1,6 +1,7 @@
 Rhythm:
     Done:
         Courses List Page
+        Take Quiz        
     Todo:
 
 Shukti:

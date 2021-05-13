@@ -3,6 +3,7 @@ import CourseDetails from './components/CourseDetails.vue'
 import CreateThread from './components/CreateThread.vue'
 import InstructorDashboard from './components/InstructorDashboard.vue'
 import CreateCourse from './components/CreateCourse.vue'
+import TakeQuiz from './components/TakeQuiz.vue'
 
 export default [
    { path : '/course', component: CourseView},
@@ -10,4 +11,5 @@ export default [
    { path : '/createthread', component: CreateThread},
    { path : '/instructordashboard', component: InstructorDashboard},
    { path : '/instructordashboard/createcourse', component: CreateCourse},
+   { path : '/takequiz', component : TakeQuiz}
 ];
