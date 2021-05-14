@@ -13,6 +13,7 @@ $font15 : 15px;
 $font16 : 16px;
 $font18 : 18px;
 $font20 : 20px;
+$font25 : 25px;
 $font30 : 30px;
 
 $regular : 400;
@@ -66,5 +67,52 @@ $bold : 700;
     &:hover{
         background-color: $orange;
         border: solid 2px $orange;                
+    }
+}
+
+
+@mixin title{
+    font-size: $font30;
+    display: flex;
+    font-weight: $semibold;
+    justify-content: center;
+    align-items: center;
+    &::before, &::after{
+        display: block;
+        background: $wing;
+        content: '';
+        width : 40px;
+        height: 15px;
+        margin : 0 20px;
+    }
+    margin : 50px;
+}
+
+@mixin content{
+    margin : 60px auto;
+    width : 85%;
+    border: solid 2px $greyLight;
+    box-sizing: border-box;
+    padding : 40px 60px;
+    text-align: left;
+}
+
+@mixin grey-area{
+    border : solid 1px $grey3;
+    background-color: $greyLight;
+    border-radius: 10px;
+}
+
+.add-button{
+    cursor: pointer;
+    display: inline-block;
+    @include grey-area;
+    color : $black;
+    font-size: $font15;
+    padding : 0 20px ;
+    line-height: 40px;
+    i{
+        font-size: $font18;
+        margin-right : 20px;
     }
 }
