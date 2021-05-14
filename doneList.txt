@@ -3,8 +3,10 @@ Rhythm:
         Courses List Page
         Take Quiz        
         Submit Assignment        
+        Set Quiz        
     Todo:
-        Set Quiz
+        playground
+        admin panel
         
 Shukti:
     Done:
