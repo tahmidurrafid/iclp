@@ -9,6 +9,8 @@ import SetQuiz from './components/SetQuiz.vue'
 import Playground from './components/Playground.vue'
 import AdminPanel from './components/AdminPanel.vue'
 import CreateGame from './components/CreateGame.vue'
+import Login from './components/Login.vue'
+import Registration from './components/Registration.vue'
 
 export default [
    { path : '/course', component: CourseView},
@@ -22,4 +24,6 @@ export default [
    { path : '/playground', component : Playground},
    { path : '/admin', component : AdminPanel},
    { path : '/creategame', component : CreateGame},
+   { path : '/login', component : Login},
+   { path : '/registration', component : Registration},
 ];

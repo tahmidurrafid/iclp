@@ -1,0 +1,92 @@
+@import "../scss/_variables.scss";
+
+.auth{
+    background-repeat: no-repeat;
+    background-position: 0px 50px;
+    background-size: 100% auto;
+    background-attachment: fixed;
+    background-color: $greyLight;
+    padding: 50px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    align-items: center;
+    .floating{
+        width: 40%;
+        height: max-content;
+        text-align: center;
+        justify-content: center;
+        .logo{
+            width: 100%;
+            justify-content: center;
+            display: flex;
+            img{
+                display: block;
+                width : 150px;
+            }
+            margin : 20px 0;
+        }
+        h3{
+            margin: 20px;
+        }
+        .card-item{
+            margin : 20px;
+            box-sizing: border-box;
+            padding : 20px 40px;
+            background-color: $white;        
+            box-shadow: $shadowLight;
+        }
+    }
+}
+
+form{
+
+    .line{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .elem.left{
+        text-align: left !important;
+    }
+    .elem.half{
+        width: 45% !important;
+    }
+
+    .elem.space{
+        margin : 10px 0;
+    }
+
+    submit{
+        font-size: $font16 !important;
+        padding : 10px 20px !important;
+        margin : 20px 0 !important;
+        display: block;
+    }
+
+    input[type='checkbox']{
+        width: auto;
+        margin-right: 10px;
+    }
+
+    input.title{
+        font-size: $font18;
+        font-weight: $medium;
+    }
+    input, select, textarea{
+        border: solid 1px $greyLight;
+        box-sizing: border-box;
+        padding: 10px 20px;
+        width: 100%;
+        transition: border .5s;
+        border-radius: 10px;
+        &:focus{
+            border-color: $orange;
+            outline: none;
+        }
+        margin: 10px 0;
+        font-size: $font15;
+    }
+}

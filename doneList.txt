@@ -7,6 +7,8 @@ Rhythm:
         playground
         admin panel
         Create Game        
+        Login
+        Registration        
     Todo:
 
 Shukti:
