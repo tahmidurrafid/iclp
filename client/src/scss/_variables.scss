@@ -2,6 +2,7 @@ $orange : #FC5A34;
 $white : #ffffff;
 $transparent : rgba(255, 255, 255, 0);
 $wing : linear-gradient(0deg, $orange 0%, $orange 20%, $transparent 20.1%, $transparent 80%, $orange 80.1%);
+$marker : linear-gradient(90deg, rgba(252,90,52,1) 0%, rgba(252,90,52,1) 60%, rgba(255,255,255,0) 60.1%, rgba(255,255,255,0) 80%, rgba(252,90,52,1) 80.1%);
 $black : #000000;
 $grey1 : #444444;
 $grey2 : #AAAAAA;
@@ -9,17 +10,27 @@ $grey3 : #C7C7C7;
 $greyLight : #E9E9E9;
 
 $font12 : 12px;
+$font13 : 13px;
 $font15 : 15px;
 $font16 : 16px;
 $font18 : 18px;
 $font20 : 20px;
 $font25 : 25px;
 $font30 : 30px;
+$font40 : 40px;
 
 $regular : 400;
 $medium : 500;
 $semibold : 600;
 $bold : 700;
+
+@mixin marker{
+    content : '';
+    display: block;
+    height : 3px;
+    width : 25px;
+    background: $marker;
+}
 
 @mixin button{
     padding : 12px 30px;
