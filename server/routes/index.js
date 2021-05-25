@@ -3,9 +3,7 @@ const db = require('../db');
 const router = express.Router();
 
 router.get('/users', async (req, res, next) => {
-    let ans;
-    let done = false;
-    await db.query("SELECT * FROM mytab", (error, result) => {
+    await db.query("SELECT * FROM MyGuests", (error, result) => {
         res.send(result);
     });
 });
