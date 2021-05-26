@@ -1,0 +1,2 @@
+node api: https://www.youtube.com/watch?v=WfCJ3sHnLBM&t=3761s
+vue auth(JWT Token):  https://www.youtube.com/watch?v=34NneWL9WaU

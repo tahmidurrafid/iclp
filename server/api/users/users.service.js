@@ -2,8 +2,9 @@ const db = require('../../db/index');
 
 module.exports = {
     create : (data, callback) => {
-        db.query(`insert into user(name) Values(?)`,
-            [data.name],
+        db.query(`insert into user(name, email, password, dateofbirth, phone, country, address) 
+                Values(?, ?, ?, ?, ?, ?, ?)`,
+            [data.name, data.email, data.password, data.dateofbirth, data.phone, data.country, data.address],
             (error, results, fields) => {
                 if(error){
                     return callback(error);
@@ -17,7 +18,6 @@ module.exports = {
         db.query(`SELECT * FROM user where id = ?`,
             [data.id],
             (error, results, fields) => {
-                console.log(data)
                 if(error){
                     return callback(error);
                 }else{
@@ -27,7 +27,7 @@ module.exports = {
         )
     },
     getAll : (data, callback) => {
-        db.query(`SELECT * FROM MyGuests`,
+        db.query(`SELECT * FROM user`,
             (error, results, fields) => {
                 if(error){
                     return callback(error);

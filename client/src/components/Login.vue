@@ -6,15 +6,15 @@
                     <img src = "@/assets/logo.svg" />
                 </div>
                 <h3>Login to ICLP</h3>         
-                <form>
-                    <input type = "text" placeholder="Enter Email"/>
-                    <input type = "password" placeholder="Your password"/>
+                <form @submit.prevent = "submitForm">
+                    <input type = "text" v-model="form.email" placeholder="Enter Email"/>
+                    <input type = "password"  v-model="form.password" placeholder="Your password"/>
 
                     <div class = "line">
                         <div class = "elem half">
                         </div>
                         <div class = "elem half">
-                            <submit class = "button solid small white">Login</submit>
+                            <input type = "submit" class = "button solid small white" value = "Login" />
                         </div>
                     </div>
                 </form>
@@ -24,8 +24,30 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
-    name : "Login"
+    name : "Login",
+    data(){
+        return {
+            form : {
+                email : '',
+                password : ''
+            }
+        }
+    },
+    methods : {
+        submitForm : function(){
+            console.log(this.form);
+            axios.post(`api/users/login`, this.form)
+                .then((response) => {
+                    console.log(response.data)
+                    if(response.data.success == 1){
+                        localStorage.setItem("token", response.data.token);
+                        this.$router.push('/course')
+                    }
+                })
+        }
+    }
 }
 </script>
 

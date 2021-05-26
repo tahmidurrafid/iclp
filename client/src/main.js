@@ -5,6 +5,8 @@ import routes from './routes.js'
 import Vuex from 'vuex'
 import Vueditor from 'vueditor'
 import 'vueditor/dist/style/vueditor.min.css'
+import axios from 'axios'
+
 let config = {
   toolbar: [
     'removeFormat', 'undo', '|', 'elements', 'fontName', 'fontSize', 'foreColor', 'backColor', 'divider',
@@ -30,10 +32,13 @@ Vue.use(VueRouter)
 
 Vue.config.productionTip = false
 
+axios.defaults.baseURL = 'http://localhost:3000/'
+axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem("token");
 
 const router = new VueRouter({
    routes
 });
+
 
 new Vue({
   render: h => h(App),

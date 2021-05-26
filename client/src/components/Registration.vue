@@ -7,53 +7,39 @@
                 </div>
                 
                 <h3>Create Account</h3>                    
-                <form>
+                <form @submit.prevent="checkForm">
                     <div class = "elem">
-                        <input type = "text" name = "email" placeholder="Enter Email"/>
+                        <input type = "text" name = "email" v-model="form.email" placeholder="Enter Email"/>
                     </div>
                     <div class = "elem">
-                        <input type = "password" name = "password" placeholder="Your password"/>
+                        <input type = "password" name = "password" v-model="form.password" placeholder="Your password"/>
                     </div>
                     <div class = "elem">
-                        <input type = "text" name = "name" placeholder="Full Name"/>
+                        <input type = "text" name = "name" v-model="form.name" placeholder="Full Name"/>
                     </div>
                     <div class = "line">
-                        <div class = "elem">
-                            <input type = "text" name = "birthDate" placeholder="Choose Borthdate" />
+                        <div class = "elem half">
+                            <input type = "text" name = "birthDate" v-model="form.dateofbirth" placeholder="Choose Borthdate" />
                         </div>
-
+                        <div class = "elem half">
+                            <select name = "country" >
+                                <option selected disabled class = "default">Country</option>
+                                <option>bangladesh</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class = "group" data-group = "contact">
-                        <div class = "group" data-group = "area" data-action = "auto_contact">
-                            <div class = "line">
-                                <div class = "elem half">
-                                    <select name = "district" class = "ignore" data-bind = "district">
-                                        <option selected disabled class = "default">Choose District</option>
-
-                                    </select>
-                                </div>
-                                <div class = "elem half">
-                                    <select name = "id" data-bind = "area">
-                                        <option selected disabled class = "default">Choose Area</option>
-                                        <option>Khilgaon</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class = "elem">
-                            <input type = "text" name = "address" placeholder="address" />
-                        </div>
-                        <div class = "elem">
-                            <input type = "text" name = "phoneNo" placeholder="Phone No." />
-                        </div>                            
+                    <div class = "elem">
+                        <input type = "text" name = "address" v-model="form.address" placeholder="address" />
+                    </div>
+                    <div class = "elem">
+                        <input type = "text" name = "phoneNo" v-model="form.phone" placeholder="Phone No." />
                     </div>
 
                     <div class = "line">
                         <div class = "elem half">
                         </div>
                         <div class = "elem half">
-                            <submit class = "button solid small white" onclick="submitForm(this, 'users/')">
-                                Submit</submit>
+                            <input type = "submit" class = "button solid small white" value="Submit" />
                         </div>
                     </div>
                 </form>
@@ -63,8 +49,27 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
-    name : "Registration"
+    name : "Registration",
+    data(){
+        return {
+            form : {
+                email : '',
+            }
+        }
+    },
+    created() {
+    },
+    methods : {
+        checkForm : function(){
+            axios.post(`api/users/register`, this.form)
+                .then((response) => {
+                    console.log(response);
+                    this.$router.push("/login")
+                })
+        }
+    }
 }
 </script>
 

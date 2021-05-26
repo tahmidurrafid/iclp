@@ -59,11 +59,12 @@ form{
         margin : 10px 0;
     }
 
-    submit{
+    submit, input[type='submit']{
         font-size: $font16 !important;
         padding : 10px 20px !important;
         margin : 20px 0 !important;
-        display: block;
+        display: block !important;
+        text-align: center !important;
     }
 
     input[type='checkbox']{
