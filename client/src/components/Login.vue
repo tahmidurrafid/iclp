@@ -43,8 +43,10 @@ export default {
                     console.log(response.data)
                     if(response.data.success == 1){
                         localStorage.setItem("token", response.data.token);
-                        this.$router.push('/course')
+                        this.$router.push('/')
                     }
+                    this.$login.check();
+                    console.log(this.$login.status)
                 })
         }
     }

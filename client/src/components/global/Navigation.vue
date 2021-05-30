@@ -10,7 +10,7 @@
         </div>
 
         <div class = "account">
-            <div v-if="!login.status" class = "noAuth">
+            <div v-if="!$login.status" class = "noAuth">
                 <div class = "item">
                     <router-link to = "/login">Login</router-link>                
                 </div>
@@ -19,10 +19,10 @@
                 </div>
             </div>
 
-            <div v-if="login.status" class = "settings" href= "#">
+            <div v-if="$login.status" class = "settings" href= "#">
                 <a href = "#" class = "dp" v-on:click="dropdown=!dropdown">
                     <div class = "dp-icon">
-                        <img :src = "login.user.profile_photo" />
+                        <img :src = "$login.user.profile_photo" />
                     </div>
                 </a>
                 <div class = "dropdown" v-if="dropdown">
@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 export default{
     name : 'Navigation',
     data(){
@@ -70,20 +70,14 @@ export default{
         }
     },
     mounted(){
-        axios.get('api/users/me')
-            .then( response => {
-                let data = response.data;
-                if(data.success == 1){
-                    this.login.status = true;
-                    this.login.user = data.data;
-                    this.login.user.profile_photo = axios.defaults.baseURL + this.login.user.profile_photo;
-                }
-            })
+        console.log("hello");
     },
     methods : {
         signout : function(){
             localStorage.setItem('token', '');
-            this.login.status = false;
+            this.$login.status = false;
+            this.$login.check();
+            this.$router.push('/');
         }
     }
 

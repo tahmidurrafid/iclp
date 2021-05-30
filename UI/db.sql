@@ -11,5 +11,11 @@ CREATE TABLE user(
     profile_photo  VARCHAR(50)    
 )
 
-
+CREATE TABLE Course (
+	id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	instructor_id INT(6),
+	title VARCHAR(100),
+	category INT(50),
+	brief TEXT
+)
 -- INSERT INTO user(name, email, password) VALUES('rhythm', 'a', 'b');

@@ -35,6 +35,31 @@ Vue.config.productionTip = false
 axios.defaults.baseURL = 'http://localhost:3000/'
 axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem("token");
 
+
+const login = Vue.observable({
+  status : false,
+
+  check : () => {
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem("token");    
+    axios.get('api/users/me')
+    .then( response => {
+        let data = response.data;
+        if(data.success == 1){
+            login.status = true;
+            login.user = data.data;
+            login.user.profile_photo = axios.defaults.baseURL + login.user.profile_photo;
+        }else{
+          login.status = false;
+        }
+        console.log("status: " + login.status);
+        console.log(data);
+    })
+  }
+})
+
+Vue.prototype.$login = login;
+Vue.prototype.$login.check();
+
 const router = new VueRouter({
    routes
 });
