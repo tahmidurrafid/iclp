@@ -14,8 +14,11 @@
                 <div class = "wrap">
                     <div class = "heading"><span class = "marker"></span><span class = "text">Course Categories</span></div>
                     <div class = "list">
-                        <div v-for = "(item, i) in categories" v-bind:key="i" class = "list-item">
-                            <span class = "caption">{{item.title}}</span>
+                        <div v-for = "(item, i) in categories" v-bind:key="i"
+                        class = "list-item" 
+                        v-bind:class="{'selected' : (item.id == selected_category)}" 
+                        @click="selected_category=item.id; updateQuery()">
+                            <span class = "caption">{{item.value}}</span>
                             <span class = "count">{{item.count}}</span>
                         </div>
                     </div>
@@ -27,11 +30,11 @@
             <div class = "heading">Recommended Course For You</div>
 
             <div class = "course-list">
-                <div v-for="i in 5" v-bind:key="i" class = "list-item">
+                <div v-for="course in courses" :key="course.id" class = "list-item">
                     <div class = "list-item-wrap">
-                        <div class = "title"><span class = "marker"></span><span class = "text">Object Oriented Programming with Java</span></div>
+                        <div class = "title"><span class = "marker"></span><span class = "text">{{course.title}}</span></div>
                         <div class = "description">
-                            Java is a class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible
+                            {{course.brief}}
                         </div>
                         <div class = "line">
                             <div class = "upvote">
@@ -42,7 +45,7 @@
                             </div>
                         </div>
                         <div class = "line">
-                            <router-link class = "button" to = "/course/details">SEE DETAILS</router-link>
+                            <router-link class = "button" :to = "{path : '/course/details?id=' + course.id}">SEE DETAILS</router-link>
                         </div>
                     </div>
                 </div>
@@ -52,24 +55,49 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 export default{
     name : 'CourseView',
     data(){
         return{
             categories : [
-                {title : 'Structured Language', count : 3},
-                {title : 'Object Oriented', count : 1},
-                {title : 'Machine Learning', count : 5},
-                {title : 'COmputer Security', count : 3},
-                {title : 'Software Development', count : 6}
+            ],
+
+            selected_category : 0,
+            
+            courses : [
+
             ]
+        }
+    },
+    mounted(){
+        axios.get('api/courses', {params : this.$route.query}).then( response => {
+            this.courses = response.data;
+        });
+        axios.get('api/courses/categories').then( response => {
+            this.categories = response.data;
+        })
+    },
+    methods : {
+        updateQuery : function(){
+            let query = {};
+            if(this.selected_category != 0){
+                query.category = this.selected_category;
+            }
+            this.$router.push({query : query });
+
+            axios.get('api/courses', {params : this.$route.query}).then( response => {
+                this.courses = response.data;
+            });
+
         }
     }
 };
 </script>
 
 <style lang = "scss" scoped>
+    @import "../scss/_variables.scss";
     .marker{
         display: block;
         height : 3px;
@@ -116,6 +144,7 @@ export default{
                             font-weight: 600;
                             color : #828282;
                             margin : 15px 0;
+                            cursor: pointer;
                             .count{
                                 width : 20px;
                                 height: 20px;
@@ -126,6 +155,15 @@ export default{
                                 align-items: center;
                                 justify-content: center;
                             }
+                            &.selected{
+                                background-color: $orange;
+                                color : $white;
+                                .count{
+                                    background-color: $white;
+                                    color: $orange;
+                                }
+                            }
+
                         }
                     }
 
@@ -195,6 +233,11 @@ export default{
                             font-size: 14px;
                             padding : 5px 0;
                             text-align: justify;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2; /* number of lines to show */
+                            -webkit-box-orient: vertical;                            
                         }
                         .line{
                             padding : 5px 0;

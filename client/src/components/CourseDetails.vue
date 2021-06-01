@@ -29,12 +29,9 @@
             </div>
             <div class = "courseDescription" v-if="activePart==='CourseDescription'">
                 <div class = "wrap">
-                    <div class = "title"><span class = "marker"></span><span class = "text">Object Oriented Programming with Java</span></div>
+                    <div class = "title"><span class = "marker"></span><span class = "text">{{details.title}}</span></div>
                     <div class = "description">
-                        Object-Oriented programming (OOP) refers to a type of programming in which programmers define the data type of a data structure and the type of operations that can be applied to the data structure.
-                        <br>
-                        <br>
-                        As Java being the most sought-after skill, we will talk about object-oriented programming concepts in Java. An object-based application in Java is based on declaring classes, creating objects from them and interacting between these objects.<br> I have discussed Java Classes and Objects which is also a part of object-oriented programming concepts, in my previous blog.
+                        {{details.brief}}
                     </div>
                     <br>
                     <div class = "line">
@@ -49,7 +46,7 @@
                     <table class="information">
                         <tr class="infoitem">
                             <td class="infotitle">Instructor</td>
-                            <td class="infodetails">Shafin Khdem</td>
+                            <td class="infodetails">{{details.i_name}}</td>
                         </tr>
                         <tr class="infoitem">
                             <td class="infotitle">Total time</td>
@@ -143,6 +140,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 export default{
     name : 'CourseDetails',
@@ -159,8 +157,19 @@ export default{
                 {title : 'Object Oriented Programming With Java',shouldExpand : false,
                 sublist: []}
 
-            ]    
+            ],
+            details : {
+
+            }
         }
+    },
+    mounted(){
+        axios.get('api/courses/' + this.$route.query.id).then( 
+            response => {
+                this.details = response.data[0];
+                console.log(this.details[0])                
+            }
+        )
     }
 };
 </script>
