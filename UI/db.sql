@@ -18,4 +18,20 @@ CREATE TABLE Course (
 	category INT(50),
 	brief TEXT
 )
+
+CREATE TABLE courseTopic(  
+    course_id int(6),
+    topic_id int,
+    sequence_ int,
+    title varchar(255),
+    content text,
+    PRIMARY KEY (course_id, topic_id)
+);
 -- INSERT INTO user(name, email, password) VALUES('rhythm', 'a', 'b');
+CREATE TABLE courseMedia(  
+    media_id int NOT NULL primary key AUTO_INCREMENT comment 'primary key',
+    course_id int,
+    topic_id int,
+    media_type varchar(20),
+    link varchar(255)
+);

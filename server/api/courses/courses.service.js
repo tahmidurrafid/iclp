@@ -19,6 +19,17 @@ module.exports = {
             }
         )
     },
+
+    create : (data, callback) => {
+        db.query(`INSERT INTO course(instructor_id, title, brief) 
+                VALUES(${data.user.result.id}, "${data.body.title}", "${data.body.brief}")`,
+            (err, result, field) => {
+                return callback(err, result);
+            }
+        )
+        
+    },
+
     get : (data, callback) => {
         db.query(`SELECT c.id as id,
                         c.title as title,
