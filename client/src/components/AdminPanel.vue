@@ -43,56 +43,18 @@
                 <div class = "categories" v-if="selected == 'categories'">
                     <div class = "caption">Modify Categories</div>
                     <div v-for = "item in categories" v-bind:key="item.id" class = "items">
-                        <!-- <div class = "item">
-                            <div class = "wrap">
-                                <div class = "left">
-                                    Structured Programming
-                                </div>
-                                <div class = "right">
-                                    <a class = "edit">
-                                        <i class = "fa fa-edit"></i>
-                                    </a>
-                                    <a class = "edit">
-                                        <i class = "fa fa-trash-o"></i>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class = "item">
-                                <div class = "wrap">
-                                    <div class = "left">
-                                        Structured Programming
-                                    </div>
-                                    <div class = "right">
-                                        <a class = "edit">
-                                            <i class = "fa fa-edit"></i>
-                                        </a>
-                                        <a class = "edit">
-                                            <i class = "fa fa-trash-o"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class = "add">
-                                <a class = "add-button">
-                                    <i class = "fa fa-plus-circle"></i>
-                                    Add SubCategory
-                                </a>
-                            </div>
-
-                        </div> -->
                         <div class = "item">
                             <div class = "wrap">
                                 <div class = "left">
                                     {{item.value}}
                                 </div>
                                 <div class = "right">
-                                    <a class = "edit">
+                                    <span class = "edit">
                                         <i class = "fa fa-edit"></i>
-                                    </a>
-                                    <a class = "edit">
+                                    </span>
+                                    <span class = "edit" @click="deleteCategory(item.id)">
                                         <i class = "fa fa-trash-o"></i>
-                                    </a>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -145,9 +107,24 @@ export default {
         }
     },
     mounted(){
-        axios.get('api/courses/categories').then( response => {
-            this.categories = response.data;
+        axios.get('api/admin/categories').then( response => {
+            this.categories = response.data
         })
+    },
+    methods:{
+        deleteCategory:function(id){
+            // axios.delete('api/admin/categories/deleteCategory/'+id).then( response => {
+            //     const index = this.categories.findIndex(category => category.id === id)
+            //     if (~index){
+            //         this.categories.splice(index, 1)
+            //         console.log(this.categories)
+            //     }
+            //     console.log(response)
+            // })
+            this.categories=[]
+            console.log(id)
+
+        }
     }
 }
 </script>
@@ -304,7 +281,7 @@ export default {
                                 }
                                 .right{
                                     display: flex;
-                                    a{
+                                    span{
                                         font-size: $font18;
                                         display: block;
                                         color: $black;
