@@ -42,8 +42,8 @@
 
                 <div class = "categories" v-if="selected == 'categories'">
                     <div class = "caption">Modify Categories</div>
-                    <div class = "items">
-                        <div class = "item">
+                    <div v-for = "item in categories" v-bind:key="item.id" class = "items">
+                        <!-- <div class = "item">
                             <div class = "wrap">
                                 <div class = "left">
                                     Structured Programming
@@ -80,11 +80,11 @@
                                 </a>
                             </div>
 
-                        </div>
+                        </div> -->
                         <div class = "item">
                             <div class = "wrap">
                                 <div class = "left">
-                                    Structured Programming
+                                    {{item.value}}
                                 </div>
                                 <div class = "right">
                                     <a class = "edit">
@@ -96,12 +96,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class = "add">
+                        
+                    </div>
+                    <div class = "add">
                             <a class = "add-button">
                                 <i class = "fa fa-plus-circle"></i>
                                 Add Category
                             </a>
-                        </div>
                     </div>
                 </div>
 
@@ -134,12 +135,19 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name : "AdminPanel",
     data(){
         return { 
             selected : 'reassign',
+            catagories:[]
         }
+    },
+    mounted(){
+        axios.get('api/courses/categories').then( response => {
+            this.categories = response.data;
+        })
     }
 }
 </script>
