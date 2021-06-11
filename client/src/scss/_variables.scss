@@ -89,6 +89,7 @@ $bold : 700;
     font-weight: $semibold;
     justify-content: center;
     align-items: center;
+    color: $black;
     &::before, &::after{
         display: block;
         background: $wing;
