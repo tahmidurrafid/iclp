@@ -42,14 +42,9 @@ module.exports = {
     },
 
     getFullCourse: async (req, res) => {
-        console.log(req.params.id);
         let course = await coursesService.getFullCourse(req.params.id);
-        console.log(course);
-        res.json({
-            success : 1,
-            message : course
-        })
-    } ,
+        res.json(course);
+    },
 
     saveTopic : (req, res) => {
 

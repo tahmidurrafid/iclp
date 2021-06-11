@@ -66,8 +66,9 @@ module.exports = {
     },
 
     updateContent : (req, callback) => {
-        db.query(`UPDATE courseTopic SET content = '${ JSON.stringify( req.body.topic.content) }'
+        db.query(`UPDATE courseTopic SET content = ? , html = ?
         WHERE course_id = ${req.body.id} AND topic_id = ${req.body.topic.id}`,
+        [JSON.stringify( req.body.topic.content) , req.body.topic.html],
         (err, result, fields) => {
             callback(err, result);
         })
@@ -80,7 +81,6 @@ module.exports = {
 
         let topics = await query(`SELECT * FROM courseTopic WHERE course_id = ${id} ORDER BY topic_id ASC`)
         course.topics = topics;
-
         let media = await query(`SELECT * FROM courseMedia WHERE course_id = ${id}`);
         course.media = media;
         return course;

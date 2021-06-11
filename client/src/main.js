@@ -51,7 +51,7 @@ const login = Vue.observable({
 
   check : () => {
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem("token");    
-    axios.get('api/users/me')
+    axios.get("api/users/me")
     .then( response => {
         let data = response.data;
         if(data.success == 1){
@@ -68,14 +68,17 @@ const login = Vue.observable({
 })
 
 Vue.prototype.$login = login;
-Vue.prototype.$login.check();
 
 const router = new VueRouter({
-   routes
+   routes, mode : 'history'
 });
 
 
 new Vue({
   render: h => h(App),
-  router: router
+  router: router,
+  mounted(){
+    // console.log("Created");
+    Vue.prototype.$login.check();
+  }
 }).$mount('#app')

@@ -15,10 +15,11 @@
                 <div class="list-item">
                     <div class="title"><input type = "text" v-model="topic.title" 
                     placeholder="Your title goes here..."/> </div>
-                    <div><i class="fa fa-save" @click="saveTopic(i)"></i></div>
+                    <div><i class="fa" 
+                    v-bind:class="selected!=i? 'fa-edit': 'fa-save' " @click="saveTopic(i)"></i></div>
                     <div><i class="fa fa-trash"></i></div>
                 </div>
-                <div class="media">
+                <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
                     <!-- <table class="media-list">
                         <tr v-for = "(item, i) in media" v-bind:key="i" class="list-item">
                             <td class="number">{{i+1}}</td>
@@ -33,8 +34,11 @@
 
                     <quill-editor
                         :ref="'quill_' + i"
-                        v-model="topic.content"
+                        v-model="topic.html"
+                        @ready="onEditorReady(i)"
                     />
+
+                        <!-- v-model="topic.content" -->                    
                 </div>
 
             </div>
@@ -60,12 +64,33 @@ export default{
                 topics : [
                 ]
             },
-            content : "<h2>Hello world</h2><img src = 'http://localhost:8080/img/logo.00a80a24.svg'/>"
+            selected : -1
         }
     },
 
     mounted(){
+        if(!this.$route.query.id){
+            return;
+        }
+
         this.course.id = this.$route.query.id;
+        axios.get(`api/courses/${this.course.id}/all`).then(res => {
+            let data = res.data;
+            this.course.title = data.title;
+            this.course.brief = data.brief;
+            for(let i in data.topics){
+                console.log(data.topics[i]);
+                let content = data.topics[i].content;
+                let topic = {
+                    id : data.topics[i].topic_id,
+                    title : data.topics[i].title,
+                    html : "",
+                    loaded : JSON.parse(content)
+                }
+                console.log(content);
+                this.course.topics.push(topic);
+            }
+        })
     },
     methods : {
         createCourse : function(){
@@ -76,6 +101,11 @@ export default{
             )
         },
 
+        onEditorReady : function(i){
+            let editor = this.$refs["quill_" + i][0].quill;
+            editor.setContents(this.course.topics[i].loaded)
+        },
+
         addTopic : function(){
             let id = 1;
             for(let i = 0; i < this.course.topics.length; i++){
@@ -84,8 +114,10 @@ export default{
             this.course.topics.push({
                 id : id,
                 title : "",
-                content : "Write something here..."
+                content : "",
+                html : ""
             })
+            this.selected = this.course.topics.length-1;
         },
 
         test : function(i){
@@ -94,10 +126,17 @@ export default{
         },
 
         saveTopic : function(i){
+            if(i != this.selected){
+                this.selected = i;
+                return;
+            }
+
             let editor = this.$refs["quill_" + i][0].quill;
             console.log(editor.getContents());
             let data = this;
             let contents = editor.getContents().ops;
+
+            console.log(this.course.topics);
 
             let files = [];
             for(let i = 0; i < contents.length; i++){
@@ -113,7 +152,11 @@ export default{
                 }
             }
 
-            run().catch(err => console.log(err));
+            run().then( () => {
+                if(this.selected == i){
+                    this.selected = -1;
+                }
+            }).catch(err => console.log(err));
 
             async function run() {
                 const formData = new FormData();
@@ -149,7 +192,9 @@ export default{
                     }
                     contents[x].attributes.alt = res.data[x].media_id;
                 }
+                editor.setContents(contents);
                 course.topic.content = editor.getContents().ops;
+                course.topic.html = data.course.topics[i].html;
                 let response = await axios.put('api/courses/content', course);
                 console.log(response.data);
             }
@@ -165,6 +210,10 @@ export default{
         display: flex;
         justify-content: flex-end;
         margin-top : 20px;
+    }
+
+    .collapsed{
+        display: none;
     }
 
     .marker{
