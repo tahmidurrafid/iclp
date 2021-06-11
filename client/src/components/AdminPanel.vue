@@ -103,7 +103,7 @@ export default {
     data(){
         return { 
             selected : 'reassign',
-            catagories:[]
+            categories:[]
         }
     },
     mounted(){
@@ -113,16 +113,16 @@ export default {
     },
     methods:{
         deleteCategory:function(id){
-            // axios.delete('api/admin/categories/deleteCategory/'+id).then( response => {
-            //     const index = this.categories.findIndex(category => category.id === id)
-            //     if (~index){
-            //         this.categories.splice(index, 1)
-            //         console.log(this.categories)
-            //     }
-            //     console.log(response)
-            // })
-            this.categories=[]
-            console.log(id)
+            axios.delete('api/admin/categories/deleteCategory/'+id).then( response => {
+                const index = this.categories.findIndex(category => category.id === id)
+                if (~index){
+                    this.categories.splice(index, 1)
+                    console.log(this.categories)
+                }
+                console.log(response)
+            })
+            // this.categories=[]
+            // console.log(id)
 
         }
     }
