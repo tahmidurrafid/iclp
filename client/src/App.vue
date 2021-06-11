@@ -33,13 +33,10 @@ export default {
   }
 
   #app , input, select, textarea{
-
     font-family: poppins, Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* text-align: center; */
     color: #2c3e50;
-    /* margin-top: 60px; */
     margin : 0;
     padding : 0;
 
