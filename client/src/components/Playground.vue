@@ -21,28 +21,6 @@
             </div>
         </div>
         <div class = "content">
-            <div class = "leftBar">
-                <div class = "item">
-                    <div class = "wrap">
-                        <div class = "heading"><span class = "marker"></span><span class = "text">Search</span></div>
-                        <div class = "search">
-                            <input type = "text" placeholder="Search for courses"/>
-                            <div class = "button"><i class = "fa fa-search"></i></div>
-                        </div>                    
-                    </div>
-                </div>
-                <div class = "item">
-                    <div class = "wrap">
-                        <div class = "heading"><span class = "marker"></span><span class = "text">Course Categories</span></div>
-                        <div class = "list">
-                            <div v-for = "(item, i) in categories" v-bind:key="i" class = "list-item">
-                                <span class = "caption">{{item.title}}</span>
-                                <span class = "count">{{item.count}}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class = "items">
                 <div v-for="i in 5" v-bind:key="i"  class = "item">
                     <div class = "wrap">
@@ -77,13 +55,7 @@ export default {
     name : "Playground",
     data(){
         return{
-            categories : [
-                {title : 'Structured Language', count : 3},
-                {title : 'Object Oriented', count : 1},
-                {title : 'Machine Learning', count : 5},
-                {title : 'COmputer Security', count : 3},
-                {title : 'Software Development', count : 6}
-            ]
+            games : []
         }
     }    
 }
@@ -146,87 +118,8 @@ export default {
             width : 85%;
             display: flex;
             justify-content: space-between;
-            .leftBar{
-                width : 25%;
-                .item{
-                    padding-bottom: 30px;
-                    .wrap{
-                        border : solid 3px #E9E9E9;
-                        box-sizing: border-box;
-                        padding : 20px 30px;
-                        .heading{
-                            display: flex;
-                            align-items: center;
-                            padding : 10px 0;
-                            .text{
-                                padding-left: 10px;
-                                color : #000;
-                                font-size: 20px;
-                                font-weight: 600;
-                            }
-                        }
-
-                        .list{
-                            display: block;
-                            .list-item{
-                                height : 45px;
-                                background-color: #F6F6F6;
-                                color : #828282;
-                                box-sizing: border-box;
-                                display: flex;
-                                padding : 0 15px;
-                                justify-content: space-between;
-                                align-items: center;
-                                font-size: 13px;
-                                font-weight: 600;
-                                color : #828282;
-                                margin : 15px 0;
-                                .count{
-                                    width : 20px;
-                                    height: 20px;
-                                    background-color: #FC5A34;
-                                    border-radius: 100px;
-                                    color : white;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                }
-                            }
-                        }
-
-                        .search{
-                            display: flex;
-                            justify-content: space-between;
-                            padding : 17px 0 10px;
-                            input{
-                                flex-grow: 1;
-                                border : none;
-                                background-color: #F6F6F6;
-                                padding-left: 10px;
-                                font-size: 13px;
-                                font-weight: 600;
-                                color : #7A7A7A;
-                                font-family: poppins;
-                                display: block;
-                            }
-                            .button{
-                                cursor: pointer;
-                                height: 40px;
-                                width : 40px;
-                                display: flex;
-                                background-color: #FC5A34;
-                                justify-content: center;
-                                align-items: center;
-                                i{
-                                    color: white;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             .items{
-                width: 70%;
+                width: 60%;
                 display: flex;
                 flex-wrap: wrap;
                 .item{

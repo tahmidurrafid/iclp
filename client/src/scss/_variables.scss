@@ -118,14 +118,29 @@ $bold : 700;
 
 .add-button{
     cursor: pointer;
+    width: 20%;
     display: inline-block;
     @include grey-area;
     color : $black;
     font-size: $font15;
     padding : 0 20px ;
     line-height: 40px;
+    margin-right: 30px;
+    text-align: center;
     i{
         font-size: $font18;
         margin-right : 20px;
     }
+}
+
+.add-file{
+    margin-right: 40px;
+    width: 70%;
+    cursor: pointer;
+    display: inline-block;
+    @include grey-area;
+    color : $black;
+    font-size: $font15;
+    padding : 0 20px ;
+    line-height: 40px;
 }

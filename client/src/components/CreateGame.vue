@@ -1,44 +1,100 @@
 <template>
-    <div class = "create-game">
+<div>
+    <div class = "create-game" v-if="activePart==='create'">
         <div class = "title">Create Game</div>
         <div class = "content">
             <div class = "game-title">
-                <input type="text" placeholder="Game Title Goes Here" />
+                <input type="text" v-model="game.title" placeholder="Game Title Goes Here" />
             </div>
             <div class = "description">
                 <span>Description</span>
-                <textarea placeholder="Put Your Game Description Here">
+                <textarea v-model="game.description" placeholder="Put Your Game Description Here">
 
                 </textarea>
             </div>
             <div class = "add">
-                <a class = "add-button">
-                    <i class = "fa fa-plus-circle"></i>
+                <label class = "add-button">
                     Add Cover Photo
-                </a>
+                </label>
+                <input class = "add-file" type="file" id="pic" ref="pic" v-on:change="handlePicUpload()"/>
             </div>                
             <div class = "add">
-                <a class = "add-button">
-                    <i class = "fa fa-plus-circle"></i>
+                <label class = "add-button"> 
                     Upload Game
-                </a>
+                </label>
+                <input class = "add-file" type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
             </div>
             <div class = "submit">
-                <a class = "button white solid">Submit</a>
+                <button v-on:click="submitGame()" class = "button white solid">Submit</button>
             </div>
         </div>
     </div>
+    <div class="sucsees" v-if="activePart==='success'">
+    <div>
+        Sucessful
+    </div>
+    </div>
+    <div class="failed" v-if="activePart==='fail'">
+    <div>
+        Failed
+    </div>
+    </div>
+</div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
-    name : 'CreateGame'
+    name : 'CreateGame',
+    data()
+    {
+        return{
+            game : {
+                title:'',
+                description:'',
+                pic: '',
+                file:''
+            },
+            activePart: 'create',
+        }
+
+    },
+    methods: {
+    handlePicUpload(){
+        this.game.pic = this.$refs.pic.files[0];
+    },
+    handleFileUpload(){
+        this.game.file = this.$refs.file.files[0];
+    },
+    submitGame:function(){
+        let formData = new FormData();
+        formData.append('pic', this.game.pic);
+        formData.append('file', this.game.file);
+        formData.append('title', this.game.title);
+        formData.append('description', this.game.description);
+        axios.post( 'api/game/creategame',
+          formData,
+          {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+          }
+        ).then(response=>{
+          this.activePart='success';
+          console.log(response);
+          console.log(this.activePart);
+        });
+     }
+    }
 }
 </script>
 
 <style lang="scss" scoped>
     @import "../scss/_variables.scss";
-
+    .add{
+        display: flex;
+        justify-content: space-between;
+    }
     .create-game{
         .title{
             @include title;

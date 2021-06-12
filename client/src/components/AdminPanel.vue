@@ -121,8 +121,6 @@ export default {
                 }
                 console.log(response)
             })
-            // this.categories=[]
-            // console.log(id)
 
         }
     }
