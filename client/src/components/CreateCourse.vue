@@ -20,17 +20,20 @@
                     <div><i class="fa fa-trash"></i></div>
                 </div>
                 <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
-                    <!-- <table class="media-list">
-                        <tr v-for = "(item, i) in media" v-bind:key="i" class="list-item">
-                            <td class="number">{{i+1}}</td>
-                            <td><i class="fa fa-files-o"></i></td>
-                            <td class="media-name">{{item}}</td>
-                        </tr>
-                    </table> -->
-                    <button class="add-media" @click="test()">
-                        <span><i class="fa fa-plus-circle"></i></span>
-                        <span> Add Media </span>
-                    </button>
+                    <div class="media-list">
+                        <div v-for = "(video, j) in topic.videos" v-bind:key="j" class="list-item">
+                            <div class="number">{{j}}</div>
+                            <div class = "icon"><i class="fa fa-file-movie-o"></i></div>
+                            <div class="media-name">{{video.name}}</div>
+                        </div>
+                    </div>
+                    <div class="add-media" >
+                        <label :for="'addVideo' + '_' + i">
+                            <input type = "file" :id="'addVideo' + '_' + i" @change="fileChanged($event ,i)"/>                        
+                            <span><i class="fa fa-plus-circle"></i></span>
+                            <span> Add Video</span>
+                        </label>
+                    </div>
 
                     <quill-editor
                         :ref="'quill_' + i"
@@ -43,10 +46,18 @@
 
             </div>
 
-            <button class="add-new-topic" @click="addTopic()">
-                <span><i class="fa fa-plus-circle"></i></span>
-                <span> Add New Topic </span>
-            </button>
+            <div class = "add-new">
+                <div class = "plus">
+                    <div class = "icon">
+                        <i class = "fa fa-plus"></i>
+                    </div>
+                    <div class = "options">
+                        <div class = "option" @click="addTopic()">Topic</div>
+                        <div class = "option">Assignment</div>
+                    </div>                    
+                </div>
+            </div>
+
         </div>
     </div>
 </template>
@@ -57,14 +68,15 @@ export default{
     data(){
         return{
             course : {
-                id : 1,
+                id : 0,
                 title : "",
                 brief : "",
 
                 topics : [
                 ]
             },
-            selected : -1
+            selected : -1,
+            files : ""
         }
     },
 
@@ -76,27 +88,54 @@ export default{
         this.course.id = this.$route.query.id;
         axios.get(`api/courses/${this.course.id}/all`).then(res => {
             let data = res.data;
+            console.log(data);
             this.course.title = data.title;
             this.course.brief = data.brief;
             for(let i in data.topics){
-                console.log(data.topics[i]);
                 let content = data.topics[i].content;
                 let topic = {
                     id : data.topics[i].topic_id,
                     title : data.topics[i].title,
                     html : "",
-                    loaded : JSON.parse(content)
+                    loaded : JSON.parse(content),
+                    videos : 
+                        data.media.filter( ( e ) => {
+                            return e.media_type == "mp4" && e.topic_id == data.topics[i].topic_id;
+                        })
                 }
-                console.log(content);
+                console.log(topic);
                 this.course.topics.push(topic);
             }
         })
     },
     methods : {
+
+        fileChanged : function(event, index){
+            if(!event.target.files.length){
+                return;
+            }
+            let file = event.target.files[0];
+            this.course.topics[index].videos.push(file);
+            let formData = new FormData();
+            formData.append("video", file);
+            let data = {
+                course_id : this.course.id,
+                topic_id : this.course.topics[index].id,
+                seq : this.course.topics[index].videos.length - 1
+            };
+            formData.append("data", JSON.stringify(data));
+            axios.post('api/courses/video', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+            }).then( () => {
+
+            });
+        },
+
         createCourse : function(){
             axios.post("api/courses/create", this.course).then(
-                res => {
-                    console.log("Inserted " + res)
+                () => {
                 }
             )
         },
@@ -115,14 +154,10 @@ export default{
                 id : id,
                 title : "",
                 content : "",
-                html : ""
+                html : "",
+                videos : []
             })
             this.selected = this.course.topics.length-1;
-        },
-
-        test : function(i){
-            console.log("This is test" + i);
-            console.log(this.$refs["quill_" + 0][0].quill.getContents())
         },
 
         saveTopic : function(i){
@@ -132,11 +167,9 @@ export default{
             }
 
             let editor = this.$refs["quill_" + i][0].quill;
-            console.log(editor.getContents());
             let data = this;
             let contents = editor.getContents().ops;
 
-            console.log(this.course.topics);
 
             let files = [];
             for(let i = 0; i < contents.length; i++){
@@ -195,8 +228,7 @@ export default{
                 editor.setContents(contents);
                 course.topic.content = editor.getContents().ops;
                 course.topic.html = data.course.topics[i].html;
-                let response = await axios.put('api/courses/content', course);
-                console.log(response.data);
+                await axios.put('api/courses/content', course);
             }
 
         }
@@ -318,33 +350,53 @@ export default{
                     .list-item{
                         text-align: left;
                         font-size: 16px;
+                        border: none;
+                        background-color: transparent;
+                        justify-content: flex-start;
+                        align-items: center;
                         .number{
                             font-size: 14px;
-                            width : 18px;
-                            height: 18px;
+                            $dim : 20px;
+                            width : $dim;
+                            height: $dim;
                             background-color: #404040;
-                            border: 1px solid #707070;
+                            // border: 1px solid #707070;
                             border-radius: 100px;
                             color : white;
                             display: flex;
                             align-items: center;
                             justify-content: center;
+                            margin-right: 15px;
+                        }
+                        .icon{
+                            margin-right: 15px;
                         }
                     }
                     
                 }
                 .add-media{
-                    width: 170px;
-                    background-color: #EFEFEF;
-                    border: 1px solid #CBCBCB;
-                    border-radius: 10px;
-                    font-weight: 500;
-                    padding : 10px 25px;
-                    display: flex;
-                    justify-content: space-between;
+                    position: relative;
+                    label { 
+                        width: max-content;
+                        background-color: #EFEFEF;
+                        border: 1px solid #CBCBCB;
+                        border-radius: 10px;
+                        font-weight: 500;
+                        padding : 10px 25px;
+                        display: flex;
+                        justify-content: space-between;
+                        cursor: pointer;
+                    }
+                    input{
+                        height: 0;
+                        position : absolute;
+                        left: 0;
+                        top : 0;
+                    }
                     font-size: 16px;
-                    margin-top: 30px;
                     cursor: pointer;
+                    margin-top: 30px;                    
+                    margin-bottom : 50px;
                 }
                 .editor{
                     margin-top: 30px;
@@ -365,6 +417,52 @@ export default{
                     cursor: pointer;
                 }
             }
+
+            .add-new{
+                padding-bottom: 70px;
+                padding-top : 50px;
+                .plus{
+                    $dim : 50px;
+                    width : $dim;
+                    height : $dim;
+                    position : relative;
+                    .icon{
+                        width : 100%;
+                        height : 100%;
+                        background-color: $orange;
+                        color : $white;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 100%;
+                        cursor: pointer;                        
+                    }
+                    &:hover .options{
+                        display: block;
+                    }
+                    .options{
+                        position: absolute;
+                        display: none;
+                        left : 100%;
+                        top : 0;
+                        box-shadow: $shadowMid;
+                        border-radius: 20px;
+                        overflow: hidden;
+                        .option{
+                            padding: 10px 20px;
+                            font-size: $font15;
+                            font-weight: $medium;
+                            cursor: pointer;
+                            &:hover{
+                                background-color: $orange;
+                                color : $white;
+                            }
+                        }
+                    }
+                }
+
+            }
+
             .add-new-topic{
                 width: 195px;
                 background-color: #EFEFEF;

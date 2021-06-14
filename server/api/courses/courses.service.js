@@ -24,12 +24,40 @@ module.exports = {
         )
     },
 
+    saveVideo : async (data, callback) => {
+        let response = await query(`INSERT INTO courseMedia(course_id, topic_id, media_type, name) 
+            VALUES(${data.course_id}, ${data.topic_id}, "mp4", "${data.name}")`);
+        let id = response.insertId;
+        let name = `storage/uploads/video_${ data.course_id + "_" + data.topic_id + "_" + id}.mp4`;
+
+        db.query(`UPDATE courseMedia SET link = "${name}" WHERE media_id = ${id}`, 
+            (err, result, fields) =>{
+                let data = {
+                    path : name
+                };
+                callback(err, data);
+            })
+    },
+
     create : (data, callback) => {
-        db.query(`INSERT INTO course(instructor_id, title, brief) 
-                VALUES(${data.user.result.id}, "${data.body.title}", "${data.body.brief}")`,
+        let queryString = `INSERT INTO course(title, brief, instructor_id) 
+        VALUES(?, ?, ?)`;
+        let param = [data.body.title, data.body.brief, data.user.result.id];
+        console.log(param);
+        if(data.body.id != 0){
+            queryString = `UPDATE course SET 
+                title = "${data.body.title}", 
+                brief =  "${data.body.brief}"
+                WHERE id = ${data.body.id}`;
+                param = [data.body.title, data.body.brief, data.body.id]
+        }
+        db.query( queryString,
+            param,
             (err, result, field) => {
-                console.log(err);
-                console.log(result);
+                if(err)
+                    console.log(err);
+                else 
+                    console.log("success");
                 return callback(err, result);
             }
         )
@@ -37,7 +65,6 @@ module.exports = {
     },
 
     saveTopic : (data, callback) => {
-        // console.log(data);
         db.query(`INSERT INTO courseTopic(course_id, topic_id, title) 
         VALUES( ${data.course.id}, ${data.course.topic.id}, "${data.course.topic.title}") ON DUPLICATE KEY UPDATE    
         title="${data.course.topic.title}"` , (err, result, field) => {
@@ -46,12 +73,10 @@ module.exports = {
     },
 
     saveMedia : async (data, callback) => {
-        // console.log(data);
         ans = await query(`INSERT INTO courseMedia(course_id, topic_id, media_type)
                 VALUES(${data.course_id}, ${data.topic_id}, "${data.media_type}")`);
         
         let mediaId = ans.insertId;                
-        // console.log(mediaId);
         let link = `${"storage/uploads/" + "content_" + data.course_id + "_" + data.topic_id + 
         "_" + mediaId + "." + data.media_type}`
 
@@ -84,7 +109,7 @@ module.exports = {
         let media = await query(`SELECT * FROM courseMedia WHERE course_id = ${id}`);
         course.media = media;
         return course;
-        // console.log(JSON.stringify(course));
+
     },
 
     get : (data, callback) => {
@@ -119,5 +144,10 @@ module.exports = {
             }
         )
     },
-
+    getAllForInstructor : (data, callback) => {
+        db.query(`SELECT * FROM course WHERE instructor_id = ${data.user_id}`, 
+            (err, results, fields) => {
+                callback(err, results);
+            })
+    }
 };
