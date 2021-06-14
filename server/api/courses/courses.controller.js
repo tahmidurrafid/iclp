@@ -31,7 +31,6 @@ module.exports = {
     },
 
     get: (req, res) => {
-        // console.log(req.params)
         coursesService.get(req.params, (err, results) => {
             if (err) {
                 res.send("Error ase");
@@ -44,6 +43,39 @@ module.exports = {
     getFullCourse: async (req, res) => {
         let course = await coursesService.getFullCourse(req.params.id);
         res.json(course);
+    },
+
+    saveVideo : (req, res) => {
+        const form = new formidable.IncomingForm();
+        form.parse(req, function(err, fields, files) {
+            if (err) {
+                return res.status(400).json({ error: err.message });
+            }
+            let videos;
+            let response = {
+                success : {
+                    success : 1,
+                },
+                failure : {
+                    success : 0
+                }
+            }
+            videos = Object.keys(files);
+            let parsed = JSON.parse(fields.data);
+            parsed.name = files["video"].name;
+            coursesService.saveVideo( parsed, (err, result) => {
+                if(err){
+                    res.json(response.failure);
+                    return;
+                }
+                let oldPath = files["video"].path;
+                var rawData = fs.readFileSync(oldPath);
+                fs.writeFile(result.path, rawData, function(err){
+                    if(err) console.log(err)
+                })
+                res.json(response.success);
+            })
+        });
     },
 
     saveTopic : (req, res) => {
@@ -62,7 +94,6 @@ module.exports = {
             let response = {};
 
             coursesService.saveTopic(data, async (err, resSave) => {
-                console.log(data.files.length)
                 for(let i = 0; i < data.files.length; i++){
                     let format = data.files[i];
                     let oldPath = files[format].path;
@@ -74,7 +105,6 @@ module.exports = {
                         topic_id : data.course.topic.id,
                         media_type : ext,
                     });
-                    console.log(media);
 
                     var newPath = media.link;
 
@@ -93,7 +123,6 @@ module.exports = {
     updateContent : (req, res) => {
         coursesService.updateContent(req, (err, result) => {
             if(err){
-                console.log(err);
                 res.json({
                     success : 0
                 })
@@ -115,4 +144,18 @@ module.exports = {
         })
     },
 
+    getAllForInstructor : (req, res) => {
+        let data = {
+            user_id : req.user.result.id,
+        }
+        coursesService.getAllForInstructor(data, (err, result) => {
+            if(err){
+                res.json({
+                    success : 0
+                })
+            }else{
+                res.json(result)
+            }
+        });
+    }
 }

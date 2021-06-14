@@ -29,10 +29,10 @@
                     <hr class="horizontalLine">
                     <div class="course-list">
                         <div v-for = "(item, i) in courses" v-bind:key="i" class="list-item">
-                            <span class="courseID">Course ID : {{item.courseID}}</span>
+                            <span class="courseID">Course ID : {{item.id}}</span>
                             <span class="courseTitle">
-                                <span class="course-title">{{item.courseTitle}}</span>
-                                <router-link class = "button" to = "/course/details">View</router-link>
+                                <span class="course-title">{{item.title}}</span>
+                                <router-link class = "button" :to = "'createcourse?id=' + item.id">View</router-link>
                             </span>
                             <hr class="horizontalLine">
                         </div>
@@ -88,6 +88,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 export default{
     name : 'InstructorDashboard',
@@ -102,10 +103,6 @@ export default{
 
             ] ,
             courses : [
-                {courseID : 'CSE11100',courseTitle:'Object Oriented Programming with Java'},
-                {courseID : 'CSE11100',courseTitle:'Object Oriented Programming with Java'},
-                {courseID : 'CSE11100',courseTitle:'Object Oriented Programming with Java'},
-                {courseID : 'CSE11100',courseTitle:'Object Oriented Programming with Java'}
             ]  ,
             reviews : [
                 {courseID : 'CSE11100',name:'Rabeeb Ibrat',stars:5,description:'Even slightly believable. If you are going use a passage of Lorem Ipsum need some Proin gravida nibh vel velit auctor aliquet.aenean sollicitudin, lorem quis bibendum auctor...'},
@@ -114,6 +111,11 @@ export default{
                 {courseID : 'CSE11100',name:'Rabeeb Ibrat',stars:5,description:'Even slightly believable. If you are going use a passage of Lorem Ipsum need some Proin gravida nibh vel velit auctor aliquet.aenean sollicitudin, lorem quis bibendum auctor...'}
             ]
         }
+    },
+    mounted(){
+        axios.get('api/courses/for/instructor').then(res => {
+            this.courses = res.data;
+        })
     }
 };
 </script>
