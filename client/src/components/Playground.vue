@@ -25,7 +25,7 @@
                 <div v-for="item in games" v-bind:key="item.id"  class = "item">
                     <div class = "wrap">
                         <div class = "description">
-                            <a class = "tag" :href="'localhost:3000/'+item.filePath">Play</a>
+                            <a class = "tag" :href="'http://localhost:3000/'+item.filePath">Play</a>
                             <div class = "title">{{item.gameName}}</div>
                             <div class = "about">
                                 {{item.details}}
@@ -33,7 +33,7 @@
                         </div>
                         <div class = "image">
                             <div class = "overlay" />
-                            <img :src = "'localhost:3000/'+item.coverPic"/>
+                            <img :src = "'http://localhost:3000/'+item.coverPic"/>
                         </div>
                     </div>
                 </div>
@@ -181,6 +181,7 @@ export default {
                             img{
                                 display: block;
                                 width : 100%;
+                                height: 100%;
                             }
                         }
                     }
