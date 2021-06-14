@@ -29,14 +29,16 @@
             </div>
         </div>
     </div>
-    <div class="sucsees" v-if="activePart==='success'">
+    <div class="success" v-if="activePart==='success'">
     <div>
-        Sucessful
+        <span>Game Upload Successful</span>
+        <span class = "count"><i class="fa fa-check-circle"></i></span>
     </div>
     </div>
-    <div class="failed" v-if="activePart==='fail'">
+    <div class="fail" v-if="activePart==='fail'">
     <div>
-        Failed
+        <span>Sorry Game upload failed</span>
+        <span class = "count"><i class="fa fa-times-circle"></i></span>
     </div>
     </div>
 </div>
@@ -80,9 +82,19 @@ export default {
             }
           }
         ).then(response=>{
-          this.activePart='success';
-          console.log(response);
-          console.log(this.activePart);
+            if(response.data=="error")
+            {
+                this.activePart='fail';
+            }
+            else
+            {
+                 this.activePart='success';
+            }
+            console.log(response);
+        }).catch(err=>{
+            this.activePart='fail';
+            console.log(err);
+
         });
      }
     }
@@ -91,6 +103,46 @@ export default {
 
 <style lang="scss" scoped>
     @import "../scss/_variables.scss";
+    .success{
+        min-height : 30px;
+        background-color: #2dda6f83;
+        color : #255a3d;
+        display: flex;
+        padding :5px 30px;
+        justify-content: space-between;
+        font-size: 25px;
+        font-weight: 600;
+        margin : 30px;
+        align-items: center;
+        text-align: center;
+        border-radius: 5px;
+        .count{
+            margin-left: 30px;
+            width : 20px;
+            height: 20px;
+            border-radius: 100px;
+        }
+    }
+    .fail{
+        min-height : 30px;
+        background-color: #eb6a6a7a;
+        color : #b10600;
+        display: flex;
+        padding :5px 30px;
+        justify-content: space-between;
+        font-size: 25px;
+        font-weight: 600;
+        margin : 30px;
+        align-items: center;
+        text-align: center;
+        border-radius: 5px;
+        .count{
+            margin-left: 30px;
+            width : 20px;
+            height: 20px;
+            border-radius: 100px;
+        }
+    }
     .add{
         display: flex;
         justify-content: space-between;

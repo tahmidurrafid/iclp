@@ -22,26 +22,18 @@
         </div>
         <div class = "content">
             <div class = "items">
-                <div v-for="i in 5" v-bind:key="i"  class = "item">
+                <div v-for="item in games" v-bind:key="item.id"  class = "item">
                     <div class = "wrap">
                         <div class = "description">
-                            <div class = "tag"><span>CODING</span></div>
-                            <div class = "title">Color Bucket Paint Box</div>
+                            <a class = "tag" :href="'localhost:3000/'+item.filePath">Play</a>
+                            <div class = "title">{{item.gameName}}</div>
                             <div class = "about">
-                                Java is a class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible
-                            </div>
-                            <div class = "react">
-                                <div>
-                                    <span>375</span> <i class="fa fa-heart-o"></i>
-                                </div>
-                                <div>
-                                    <span>RATING</span> <i class="fa fa-star"></i>
-                                </div>
+                                {{item.details}}
                             </div>
                         </div>
                         <div class = "image">
                             <div class = "overlay" />
-                            <img src = "@/assets/game.jpg" />
+                            <img :src = "'localhost:3000/'+item.coverPic"/>
                         </div>
                     </div>
                 </div>
@@ -51,13 +43,20 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     name : "Playground",
     data(){
         return{
-            games : []
+            games:[]
         }
-    }    
+    },
+    mounted(){
+        axios.get('api/game/allgames').then( response => {
+            this.games = response.data;
+            console.log(this.games);
+        })
+    }  
 }
 </script>
 
@@ -119,11 +118,11 @@ export default {
             display: flex;
             justify-content: space-between;
             .items{
-                width: 60%;
+                width: 100%;
                 display: flex;
                 flex-wrap: wrap;
                 .item{
-                    width: 50%;
+                    width: 33%;
                     box-sizing: border-box;
                     padding : 15px;
                     height: max-content;                    
@@ -142,10 +141,10 @@ export default {
                                 margin-top: 15px;
                             }
                             .tag{
-                                span{
-                                    background-color: $orange;
-                                    padding : 5px 10px;
-                                }
+                                display:inline-block;
+                                margin-bottom: 100px;
+                                background-color: $orange;
+                                padding : 5px 10px;
                             }
                             .title{
                                 font-size: $font20;

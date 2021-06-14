@@ -18,12 +18,7 @@ module.exports = {
                        id=0
                    }
                   });
-                fs.copyFile(data.files.pic.path, 'storage/Games/cover'+id+'.jpg', (err) => {
-                    if (err) throw err;
-                });
-                fs.copyFile(data.files.file.path, 'storage/Games/file'+id+'.html', (err) => {
-                    if (err) throw err;
-                });
+                
                 piclocation='storage/Games/cover'+id+'.jpg';
                 filelocation='storage/Games/file'+id+'.html'
                 db.query(`insert into game(gameName,filePath,details,coverPic) values('${data.fields.title}','${filelocation}','${data.fields.description}','${piclocation}')`,
@@ -31,10 +26,30 @@ module.exports = {
                     if(error){
                         return callback(error);
                     }
+                    fs.copyFile(data.files.pic.path, 'storage/Games/cover'+id+'.jpg', (err) => {
+                        if (err) callback(err);
+    
+                    });
+                    fs.copyFile(data.files.file.path, 'storage/Games/file'+id+'.html', (err) => {
+                        if (err) callback(err);
+                    });
+                    callback(null,results);
+
                 }
                 );
             }
         }
+        )
+    },
+    allGames:(data,callback)=>{
+        db.query(`SELECT * FROM game`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
         )
     }
 }
