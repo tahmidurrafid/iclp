@@ -42,14 +42,14 @@
 
                 <div class = "categories" v-if="selected == 'categories'">
                     <div class = "caption">Modify Categories</div>
-                    <div v-for = "item in categories" v-bind:key="item.id" class = "items">
+                    <div v-for = "(item,i) in categories" v-bind:key="i" class = "items">
                         <div class = "item">
                             <div class = "wrap">
                                 <div class = "left">
                                     {{item.value}}
                                 </div>
                                 <div class = "right">
-                                    <span class = "edit">
+                                    <span class = "edit" @click="renameCategory[i].visibility=!renameCategory[i].visibility">
                                         <i class = "fa fa-edit"></i>
                                     </span>
                                     <span class = "edit" @click="deleteCategory(item.id)">
@@ -58,13 +58,31 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="catagoryInput" v-if="renameCategory[i].visibility">
+                            <div class="textinput">
+                                <input type = "text" v-model="renameCategory[i].newName" placeholder="Enter new catagory name..."/>
+                            </div>
+                            <div class="catagoryAdd">
+                                <button class="button white solid small" @click="updateCategory(i)">Rename</button>
+                            </div>
+                                
+                        </div>
                         
                     </div>
                     <div class = "add">
-                            <a class = "add-button">
+                            <div class = "add-button" @click="enableAdd=!enableAdd">
                                 <i class = "fa fa-plus-circle"></i>
                                 Add Category
-                            </a>
+                            </div>
+                            <div class="catagoryInput" v-if="enableAdd">
+                                <div class="textinput">
+                                    <input type = "text" v-model="newCatagory" placeholder="Enter catagory name..."/>
+                                </div>
+                                <div class="catagoryAdd">
+                                    <button class="button white solid small" @click="addCategory()">Add</button>
+                                </div>
+                                
+                            </div>
                     </div>
                 </div>
 
@@ -84,7 +102,7 @@
                             </div>
                         </div>
                         <div class = "new-game">
-                            <a class = "button white small solid">Create New Game</a>
+                            <a class = "button white solid">Create New Game</a>
                         </div>
                     </div>
                 </div>
@@ -103,12 +121,19 @@ export default {
     data(){
         return { 
             selected : 'reassign',
-            categories:[]
+            categories:[],
+            enableAdd:false,
+            newCatagory:"",
+            renameCategory:[]
         }
     },
     mounted(){
         axios.get('api/admin/categories').then( response => {
             this.categories = response.data
+            for(let i=0;i<this.categories.length;i++){
+                let item={newName:"",visibility:false};
+                this.renameCategory.push(item);
+            }
         })
     },
     methods:{
@@ -117,12 +142,39 @@ export default {
                 const index = this.categories.findIndex(category => category.id === id)
                 if (~index){
                     this.categories.splice(index, 1)
-                    console.log(this.categories)
                 }
                 console.log(response)
             })
 
-        }
+        },
+        addCategory:function(){
+            const  categoryName={categoryName:this.newCatagory};
+            axios.post('api/admin/categories/addCategory',categoryName).then(response=>{
+                if(response.data!="error"){
+                    this.enableAdd=false;
+                    axios.get('api/admin/categories').then( response => {
+                        this.categories = response.data
+                    })
+                    this.newCatagory="";
+                     let item={newName:"",visibility:false};
+                     this.renameCategory.push(item);
+
+                }
+            })
+        },
+        updateCategory:function(i){
+            const  category={id:this.categories[i].id,name:this.renameCategory[i].newName};
+            axios.put('api/admin/categories/updateCategory',category).then(response=>{
+                if(response.data!="error"){
+                    this.renameCategory[i].visibility=false;
+                    axios.get('api/admin/categories').then( response => {
+                        this.categories = response.data
+                    })
+                    this.renameCategory[i].newName="";
+                }
+            })
+        },
+        
     }
 }
 </script>
@@ -166,12 +218,20 @@ export default {
                         font-weight: $semibold;
                         background-color: $greyLight;
                         color : $grey1;
-                        line-height: 50px;
-                        margin : 20px 0;
+                        line-height: 40px;
+                        margin : 20px 0px;
+                        padding: 5px 10px;
                         transition: color .3s, background-color .3s;
-                        &.selected , &:hover{
+                        border-radius: 5px;
+                        &.selected{
                             color : $white;
                             background-color: $grey1;
+                            &:hover{
+                                background-color: $grey1;
+                            }
+                        }
+                        &:hover{
+                            background-color: rgb(192, 192, 192);
                         }
                     }
                 }
@@ -292,9 +352,68 @@ export default {
                         }
                     }
                     .add{
-                        text-align: left;
+                        .add-button{
+                            text-align: left;
+                            width: 180px;
+                        }
+                        .catagoryInput{
+                            margin-top: 30px;
+                            width: 100%;
+                            display: flex;
+                            justify-content: space-between;
+                            .textinput{
+                                width: 78%;
+                                input{
+                                    font-size: 16px;
+                                    line-height: 35px;
+                                    width: 100%;
+                                    background-color: rgb(238, 238, 238);
+                                    border: 1px solid rgb(136, 136, 136);
+                                    border-radius: 5px;
+                                }
+                                ::placeholder{
+                                    padding-left: 10px;
+                                }
+                            }
+                            .catagoryAdd{
+                                width: 18%;
+                                .button{
+                                    width: 100%;
+                                    font-size: 16px;
+                                }
+                            }
+                        }
                     }
+                    
                 }
+            }
+        }
+    }
+    .catagoryInput{
+        margin-top: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        .textinput{
+            width: 78%;
+            input{
+                font-size: 16px;
+                line-height: 35px;
+                width: 100%;
+                background-color: rgb(238, 238, 238);
+                border: 1px solid rgb(136, 136, 136);
+                border-radius: 5px;
+            }
+            ::placeholder{
+                padding-left: 10px;
+            }
+        }
+        .catagoryAdd{
+            width: 20%;
+            .button{
+                width: 100%;
+                font-size: 16px;
             }
         }
     }

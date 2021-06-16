@@ -24,4 +24,28 @@ module.exports = {
         )
 
     },
+    addCategory: (data, callback)=>{
+        db.query(`INSERT INTO category(value) VALUES('${data}')`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
+        )
+
+    },
+    updateCategory: (data, callback)=>{
+        db.query(`UPDATE category SET value='${data.name}' WHERE id=${data.id}`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
+        )
+
+    },
 }
