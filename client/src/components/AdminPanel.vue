@@ -22,19 +22,18 @@
                         </div>
                     </div>
                     <div class= "items" >
-                        <div class = "item" v-for="i in 5" v-bind:key="i" >
+                        <div class = "item" v-for="(item,i) in courses" v-bind:key="i" >
                             <div class = "about-course">
-                                <div class = "id">Course ID : CSE11100</div>
-                                <div class = "course-title">Object Oriented Programming with Java</div>
+                                <div class = "course-title">{{item.title}}</div>
                                 <div class = "instructor">
                                     <span>Instructor</span>
-                                    <select>
-                                        <option>ID : 1140 - Tahmidur Rafid</option>
+                                    <select :id="item.id">
+                                        <option v-for="instructor in instructors" v-bind:key="instructor.id" :value="instructor.id">ID : {{instructor.id}} - {{instructor.name}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class = "action">
-                                <a class = "button white solid small">Save</a>
+                                <button class = "button white solid small" @click="reassignInstructor(item.id)">Save</button>
                             </div>
                         </div>
                     </div>
@@ -125,6 +124,18 @@
                             </router-link>
                     </div>
                 </div>
+                <div class="success" v-if="selected=='success'">
+                    <div>
+                        <span>Instructor Reassignment Successful</span>
+                        <span class = "count"><i class="fa fa-check-circle"></i></span>
+                    </div>
+                </div>
+                <div class="fail" v-if="selected=='fail'">
+                    <div>
+                        <span>Sorry Coudn't Reassign Instructor</span>
+                        <span class = "count"><i class="fa fa-times-circle"></i></span>
+                    </div>
+                </div>
 
 
 
@@ -145,7 +156,9 @@ export default {
             newCatagory:"",
             renameCategory:[],
             games:[],
-            renameGame:[]
+            renameGame:[],
+            courses:[],
+            instructors:[],
         }
     },
     mounted(){
@@ -162,6 +175,12 @@ export default {
                 let item={newName:"",visibility:false};
                 this.renameGame.push(item);
             }
+        });
+        axios.get('api/admin/courses').then(response=>{
+            this.courses=response.data
+        });
+        axios.get('api/admin/instructors').then(response=>{
+            this.instructors=response.data
         });
     },
     methods:{
@@ -226,6 +245,20 @@ export default {
                     this.renameGame[i].newName="";
                 }
             })
+        },
+        reassignInstructor:function(courseID)
+        {
+            var e = document.getElementById(courseID);
+            const data={courseID:courseID,instructorID:e.value};
+            axios.put('api/admin/updateInstructor',data).then(response=>{
+                if(response.data=="error"){
+                    this.selected="fail"
+                }
+                else{
+                    this.selected="success"
+                }
+            })
+
         }
         
     }
@@ -246,7 +279,46 @@ export default {
         }        
     }
 
-
+    .success{
+        min-height : 30px;
+        background-color: #2dda6f83;
+        color : #255a3d;
+        display: flex;
+        padding :5px 30px;
+        justify-content: space-between;
+        font-size: 25px;
+        font-weight: 500;
+        margin : 30px;
+        align-items: center;
+        text-align: center;
+        border-radius: 5px;
+        .count{
+            margin-left: 30px;
+            width : 20px;
+            height: 20px;
+            border-radius: 100px;
+        }
+    }
+    .fail{
+        min-height : 30px;
+        background-color: #eb6a6a7a;
+        color : #b10600;
+        display: flex;
+        padding :5px 30px;
+        justify-content: space-between;
+        font-size: 25px;
+        font-weight: 500;
+        margin : 30px;
+        align-items: center;
+        text-align: center;
+        border-radius: 5px;
+        .count{
+            margin-left: 30px;
+            width : 20px;
+            height: 20px;
+            border-radius: 100px;
+        }
+    }
     .admin{
         .title{
             @include title;
@@ -324,6 +396,8 @@ export default {
                                 background-color: $orange;
                                 font-size: 22px;
                                 color : $white;
+                                text-align: center;
+                                align-items: center;
                             }
                         }
                     }

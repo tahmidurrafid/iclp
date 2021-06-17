@@ -68,4 +68,31 @@ module.exports = {
 
         })
     },
+    courses: (req, res) => {
+        adminService.courses(req, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+        })
+    },
+    instructors: (req, res) => {
+        adminService.instructors(req, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+        })
+    },
+    updateInstructor: (req, res) => {
+        adminService.updateInstructor(req.body, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+        })
+    },
 }

@@ -83,4 +83,38 @@ module.exports = {
         )
 
     },
+    courses : (data, callback) => {
+        db.query(`select id,instructor_id,title from course`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
+        )
+    },
+    instructors : (data, callback) => {
+        db.query(`SELECT id,name from user where type="instructor"`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
+        )
+    },
+    updateInstructor: (data, callback)=>{
+        db.query(`UPDATE course SET instructor_id=${data.instructorID} WHERE id=${data.courseID}`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
+        )
+
+    },
 }
