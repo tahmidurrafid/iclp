@@ -39,4 +39,33 @@ module.exports = {
 
         })
     },
+    games: (req, res) => {
+        adminService.games(req, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+        })
+    },
+    updateGame:(req, res)=>{
+        adminService.updateGame(req.body, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
+    deleteGame:(req, res)=>{
+        adminService.deleteGame(req.params, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
 }

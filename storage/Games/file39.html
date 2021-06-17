@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style lang="scss">
+        body{
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: rgba(0, 0, 0, 0.637);
+        }
+        .screenContainer{
+            margin: 30px;
+            display: flex;
+            justify-content: space-between;            
+        }
+        .screen{
+            background-color: black;
+            border: 3px solid rgb(204, 204, 204);
+            height: 30vh;
+            width: 40%;
+        }
+        .titleContainer{
+            margin: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .title{
+            text-align: center;
+            font-size: 30px;
+            color: rgb(204, 204, 204);
+            width: 40%;
+        }
+        .boxes{
+            margin:50px;
+        }
+        .box{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            position: relative;
+            margin:0;
+            padding:0;
+        }
+        .break{
+            margin: -10px;
+
+        }
+        .tools{
+            margin: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .tool{
+            width: 30%;
+            height: 40vh;
+            color: rgb(204, 204, 204);
+
+        }
+        .toolTitle{
+            text-align: center;
+            font-size: 30px;
+            font-family: monospace,Courier;
+        }
+        .function{
+            font-family:Courier,monospace;
+            margin: 20px auto;
+            width: 80%;
+            display: block;
+            font-size: 25px;
+            text-align: center;
+            opacity: 0.8;
+            border-radius: 10px;
+        }
+        .function:hover,.color:hover{
+            opacity: 1;
+        }
+        #colorSelect{
+            visibility: hidden;
+        }
+        .color{
+            font-family:Courier,monospace;
+            margin: 20px auto;
+            width: 60%;
+            display: block;
+            font-size: 25px;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 600;
+            background-color: rgb(34, 34, 34);
+            opacity: 0.9;
+        }
+        .code{
+            margin-top: 10px;
+            height: 38vh;
+            background-color: black;
+            font-size: 15px;
+            border: 2px solid rgb(204, 204, 204);
+            font-family: monospace;
+            color: white;
+            padding: 2px;
+        }
+        #message{
+            width: 80%;
+            background-color: black;
+            display: none;
+            margin: 100px auto;
+            text-align: center;
+            font-size: 30px;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="titleContainer">
+        <div class="title">
+            <span>Your Screen</span>
+        </div>
+        <div class="title">
+            <span>Target</span>
+        </div>
+    </div>
+    <div class="screenContainer">
+        <div class="screen">
+            <div class="boxes" id=playerBoxes>
+
+            </div>
+        </div>
+        <div class="screen">
+            <div class="boxes" id="targetBoxes">
+            </div>
+        </div>
+    </div>
+    <div class="tools" id="tools">
+        <div class="tool">
+            <div class="toolTitle">
+                Code
+            </div>
+            <div class="code" id="code">
+                
+            </div>
+        </div>
+        <div class="tool">
+            <div class="toolTitle">
+                Functions
+            </div>
+            <button class="function" onclick="boxFunction()">addBox(color)</button>
+            <button class="function" onclick="newline()">newLine()</button>
+        </div>
+        <div class="tool" id="colorSelect">
+            <div class="toolTitle" style="font-size: 22px;">
+                Select Color Parameter
+            </div>
+            <button class="color" style="color: red;" onclick="drawBox('red')">red</button>
+            <button class="color" style="color: green;" onclick="drawBox('green')">green</button>
+            <button class="color" style="color: white;" onclick="drawBox('white')">white</button>
+        </div>
+    </div>
+    <div id="message">
+        Game Over;
+    </div>
+    <script>
+        var newLineCount=0;
+        var boxcount=0;
+        var gameover='no'
+        var targetBoxes=['red','green','white','break','red','green','white','break','red','green','white'];
+        var colorFlag=false;
+        for(i=0;i<targetBoxes.length;i++)
+        {
+            box = document.createElement('div');
+            if(targetBoxes[i]!='break')
+            {
+                box.classList.add('box');  
+                box.style.bottom=-50;
+                box.style.right=-50*i;
+                box.style.backgroundColor=targetBoxes[i];
+            }
+            else
+            {
+                box.classList.add('break');
+
+            }
+            document.getElementById("targetBoxes").appendChild(box);
+        }
+        var playerBoxes=[];
+        var code=[];
+        function boxFunction()
+        {
+            if(gameover=='no')
+            {
+                if(!colorFlag)
+                {
+                    colorFlag=true;
+                    document.getElementById("colorSelect").style.visibility="visible";
+                }
+            }
+           
+        }
+        function drawBox(c){
+            if(gameover=='no')
+            {
+                if(boxcount<9)
+                {
+                    boxcount++;
+                    playerBoxes.push(c);
+                    document.getElementById("playerBoxes").innerHTML=""
+                    for(i=0;i<playerBoxes.length;i++)
+                    {
+                        box = document.createElement('div');
+                        if(playerBoxes[i]!='break')
+                        {
+                            box.classList.add('box');  
+                            box.style.bottom=-50;
+                            box.style.right=-50*i;
+                            box.style.backgroundColor=playerBoxes[i];
+                        }
+                        else
+                        {
+                            box.classList.add('break');
+
+                        }
+                        
+                        document.getElementById("playerBoxes").appendChild(box);
+                    }
+                    code.push('addBox('+c+');');
+                    document.getElementById("code").innerHTML=""
+                    for(i=0;i<code.length;i++)
+                    {
+                        line = document.createElement('div');
+                        line.innerHTML=code[i];
+                        document.getElementById("code").appendChild(line);
+                    }
+
+                    colorFlag=false;
+                    document.getElementById("colorSelect").style.visibility="hidden";
+                }
+                if(boxcount>=9){
+                    const result=JSON.stringify(targetBoxes) == JSON.stringify(playerBoxes)
+                    if(result){
+                        document.getElementById("message").style.color="green";
+                        document.getElementById("message").innerHTML="You Win!!"
+                    }
+                    else
+                    {
+                        document.getElementById("message").style.color="red";
+                        document.getElementById("message").innerHTML="You loose!!<br>(Hint:Shouldn't need more than 9 boxes to match output!)"
+                    }
+                    gameover="yes";
+                    document.getElementById("tools").style.display="none";
+                    document.getElementById("message").style.display="block";
+                    
+                }
+            }
+        }
+        function newline()
+        {
+            if(gameover=='no')
+            {
+                if(newLineCount>=2)
+                {
+                    gameover="yes";
+                    document.getElementById("tools").style.display="none";
+                    document.getElementById("message").style.display="block";
+                    document.getElementById("message").style.color="red";
+                    document.getElementById("message").innerHTML="You loose!!<br>(Hint:Shouldn't need more than 2 newline to match output!)"
+                }
+                else
+                {
+                    newLineCount++;
+                    playerBoxes.push('break');
+                    document.getElementById("playerBoxes").innerHTML=""
+                    for(i=0;i<playerBoxes.length;i++)
+                    {
+                        box = document.createElement('div');
+                        if(playerBoxes[i]!='break')
+                        {
+                            box.classList.add('box');  
+                            box.style.bottom=-50;
+                            box.style.right=-50*i;
+                            box.style.backgroundColor=playerBoxes[i];
+                        }
+                        else
+                        {
+                            box.classList.add('break');
+
+                        }
+                        document.getElementById("playerBoxes").appendChild(box);
+                    }
+                    code.push('newLine();');
+                    document.getElementById("code").innerHTML=""
+                    for(i=0;i<code.length;i++)
+                    {
+                        line = document.createElement('div');
+                        line.innerHTML=code[i];
+                        document.getElementById("code").appendChild(line);
+                    }
+                    
+                }
+                
+            }
+        }
+        
+    </script>
+</body>
+</html>

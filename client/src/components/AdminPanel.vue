@@ -91,19 +91,38 @@
                     <div class = "heading">
                         <div class = "caption">Games you have created</div>
                     </div>
-                    <div class= "items" >
-                        <div class = "item" v-for="i in 5" v-bind:key="i" >
-                            <div class = "about-course">
-                                <div class = "id">Course ID : CSE11100</div>
-                                <div class = "course-title">Object Oriented Programming with Java</div>
-                            </div>
-                            <div class = "action">
-                                <a class = "button white solid small">View</a>
+                     <div v-for = "(item,i) in games" v-bind:key="i" class = "items">
+                        <div class = "item">
+                            <div class = "wrap">
+                                <div class = "left">
+                                    {{item.gameName}}
+                                </div>
+                                <div class = "right">
+                                    <span class = "edit" @click="renameGame[i].visibility=!renameGame[i].visibility">
+                                        <i class = "fa fa-edit"></i>
+                                    </span>
+                                    <span class = "edit" @click="deleteGame(item.id)">
+                                        <i class = "fa fa-trash-o"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <div class = "new-game">
-                            <a class = "button white solid">Create New Game</a>
+                        <div class="catagoryInput" v-if="renameGame[i].visibility">
+                            <div class="textinput">
+                                <input type = "text" v-model="renameGame[i].newName" placeholder="Enter new catagory name..."/>
+                            </div>
+                            <div class="catagoryAdd">
+                                <button class="button white solid small" @click="updateGame(i)">Rename</button>
+                            </div>
+                                
                         </div>
+                        
+                    </div>
+                    <div class = "add">
+                            <router-link class = "add-button-game" to="/CreateGame">
+                                <i class = "fa fa-plus-circle"></i>
+                                Add Game
+                            </router-link>
                     </div>
                 </div>
 
@@ -124,7 +143,9 @@ export default {
             categories:[],
             enableAdd:false,
             newCatagory:"",
-            renameCategory:[]
+            renameCategory:[],
+            games:[],
+            renameGame:[]
         }
     },
     mounted(){
@@ -134,16 +155,25 @@ export default {
                 let item={newName:"",visibility:false};
                 this.renameCategory.push(item);
             }
-        })
+        });
+        axios.get('api/admin/games').then(response=>{
+            this.games=response.data
+             for(let i=0;i<this.games.length;i++){
+                let item={newName:"",visibility:false};
+                this.renameGame.push(item);
+            }
+        });
     },
     methods:{
         deleteCategory:function(id){
             axios.delete('api/admin/categories/deleteCategory/'+id).then( response => {
-                const index = this.categories.findIndex(category => category.id === id)
-                if (~index){
-                    this.categories.splice(index, 1)
+                if(response!="error")
+                {
+                    const index = this.categories.findIndex(category => category.id === id)
+                    if (~index){
+                        this.categories.splice(index, 1)
+                    }
                 }
-                console.log(response)
             })
 
         },
@@ -174,6 +204,29 @@ export default {
                 }
             })
         },
+        deleteGame:function(id){
+            axios.delete('api/admin/games/deleteGame/'+id).then( response => {
+                if(response!="error")
+                {
+                    const index = this.games.findIndex(game => game.id === id)
+                    if (~index){
+                        this.games.splice(index, 1)
+                    }
+                }
+            })
+        },
+        updateGame:function(i){
+            const  game={id:this.games[i].id,name:this.renameGame[i].newName};
+            axios.put('api/admin/games/updateGame',game).then(response=>{
+                if(response.data!="error"){
+                    this.renameGame[i].visibility=false;
+                    axios.get('api/admin/games').then( response => {
+                        this.games = response.data
+                    })
+                    this.renameGame[i].newName="";
+                }
+            })
+        }
         
     }
 }
@@ -245,7 +298,7 @@ export default {
                 .caption{
                     @include caption;
                 }
-                .reassign-instructor, .games{
+                .reassign-instructor{
                     .heading{
                         display: flex;
                         justify-content: space-between;
@@ -318,7 +371,7 @@ export default {
                     }
                 }
 
-                .categories{
+                .categories,.games{
                     .items{
                         .item>*{
                             padding-left: 40px;
@@ -355,6 +408,24 @@ export default {
                         .add-button{
                             text-align: left;
                             width: 180px;
+                        }
+                        .add-button-game{
+                            text-align: left;
+                            width: 160px;
+                            cursor: pointer;
+                            width: 20%;
+                            display: inline-block;
+                            @include grey-area;
+                            color : $black;
+                            font-size: $font15;
+                            padding : 0 20px ;
+                            line-height: 40px;
+                            margin-right: 30px;
+                            text-align: center;
+                            i{
+                                font-size: $font18;
+                                margin-right : 20px;
+                            }
                         }
                         .catagoryInput{
                             margin-top: 30px;
