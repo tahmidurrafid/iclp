@@ -12,38 +12,69 @@
             </div>
 
             <div v-for="(topic, i) in course.topics" v-bind:key="topic.id" class="lecturelist">
-                <div class="list-item">
-                    <div class="title"><input type = "text" v-model="topic.title" 
-                    placeholder="Your title goes here..."/> </div>
-                    <div><i class="fa" 
-                    v-bind:class="selected!=i? 'fa-edit': 'fa-save' " @click="saveTopic(i)"></i></div>
-                    <div><i class="fa fa-trash"></i></div>
+                <div class = "topic" v-if="topic.type == 'topic'">
+                    <div class="list-item">
+                        <div class="title"><input type = "text" v-model="topic.title" 
+                        placeholder="Your title goes here..."/> </div>
+                        <div><i class="fa" 
+                        v-bind:class="selected!=i? 'fa-edit': 'fa-save' " @click="saveTopic(i)"></i></div>
+                        <div><i class="fa fa-trash"></i></div>
+                    </div>
+                    <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
+                        <div class="media-list">
+                            <div v-for = "(video, j) in topic.files" v-bind:key="j" class="list-item">
+                                <div class="number">{{j}}</div>
+                                <div class = "icon"><i class="fa fa-file-movie-o"></i></div>
+                                <div class="media-name">{{video.name}}</div>
+                            </div>
+                        </div>
+                        <div class="add-media" >
+                            <label :for="'addVideo' + '_' + i">
+                                <input type = "file" :id="'addVideo' + '_' + i" @change="fileChanged($event ,i)"/>                        
+                                <span><i class="fa fa-plus-circle"></i></span>
+                                <span> Add Video</span>
+                            </label>
+                        </div>
+
+                        <quill-editor
+                            :ref="'quill_' + i"
+                            v-model="topic.html"
+                            @ready="onEditorReady(i)"
+                        />
+                    </div>
                 </div>
-                <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
-                    <div class="media-list">
-                        <div v-for = "(video, j) in topic.videos" v-bind:key="j" class="list-item">
-                            <div class="number">{{j}}</div>
-                            <div class = "icon"><i class="fa fa-file-movie-o"></i></div>
-                            <div class="media-name">{{video.name}}</div>
+                <div class = "assignment" v-if="topic.type == 'assignment'">
+                    <div class="list-item">
+                        <div class="title"><input type = "text" v-model="topic.title" 
+                        placeholder="Your title goes here..."/> </div>
+                        <div><i class="fa" 
+                        v-bind:class="selected!=i? 'fa-edit': 'fa-save' " @click="saveAssignment(i)"></i></div>
+                        <div><i class="fa fa-trash"></i></div>
+                    </div>
+                    <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
+                        <div class="media-list">
+                            <div v-for = "(file, j) in topic.files" v-bind:key="j" class="list-item">
+                                <div class="number">{{j}}</div>
+                                <div class = "icon"><i class="fa fa-file-movie-o"></i></div>
+                                <div class="media-name">{{file.name}}</div>
+                            </div>
+                        </div>
+                        <div class="add-media" >
+                            <label :for="'addFile' + '_' + i">
+                                <input type = "file" :id="'addFile' + '_' + i" @change="addAssignmnetFile($event ,i)"/>                        
+                                <span><i class="fa fa-plus-circle"></i></span>
+                                <span> Add File</span>
+                            </label>
+                        </div>
+                        <textarea placeholder="Your Assignmnet description goes here..." v-model="topic.content">
+
+                        </textarea>
+                        <div class = "marks">
+                            <div class = "caption">Marks: </div>
+                            <input type = "text" v-model="topic.marks" />
                         </div>
                     </div>
-                    <div class="add-media" >
-                        <label :for="'addVideo' + '_' + i">
-                            <input type = "file" :id="'addVideo' + '_' + i" @change="fileChanged($event ,i)"/>                        
-                            <span><i class="fa fa-plus-circle"></i></span>
-                            <span> Add Video</span>
-                        </label>
-                    </div>
-
-                    <quill-editor
-                        :ref="'quill_' + i"
-                        v-model="topic.html"
-                        @ready="onEditorReady(i)"
-                    />
-
-                        <!-- v-model="topic.content" -->                    
                 </div>
-
             </div>
 
             <div class = "add-new">
@@ -53,7 +84,7 @@
                     </div>
                     <div class = "options">
                         <div class = "option" @click="addTopic()">Topic</div>
-                        <div class = "option">Assignment</div>
+                        <div class = "option" @click="addAssignmnet()">Assignment</div>
                     </div>                    
                 </div>
             </div>
@@ -93,20 +124,38 @@ export default{
             this.course.brief = data.brief;
             for(let i in data.topics){
                 let content = data.topics[i].content;
-                let topic = {
-                    id : data.topics[i].topic_id,
-                    title : data.topics[i].title,
-                    html : "",
-                    loaded : JSON.parse(content),
-                    videos : 
-                        data.media.filter( ( e ) => {
-                            return e.media_type == "mp4" && e.topic_id == data.topics[i].topic_id;
-                        })
+                if(data.topics[i].type == "topic"){
+                    let topic = {
+                        id : data.topics[i].topic_id,
+                        title : data.topics[i].title,
+                        html : "",
+                        loaded : JSON.parse(content),
+                        files : 
+                            data.media.filter( ( e ) => {
+                                return e.media_type == "mp4" && e.topic_id == data.topics[i].topic_id;
+                            }),
+                        type : "topic"
+                    }
+                    this.course.topics.push(topic);
+                }else{
+                    let parsed =  data.topics[i];
+                    let topic = {
+                        id : parsed.id,
+                        title : parsed.title,
+                        html : "",
+                        content : parsed.brief,
+                        files : [{
+                            name : parsed.file_name
+                        }],
+                        type : "assignment",
+                        marks : parsed.total_mark
+                    }
+                    this.course.topics.push(topic);
                 }
-                console.log(topic);
-                this.course.topics.push(topic);
             }
         })
+
+
     },
     methods : {
 
@@ -115,13 +164,13 @@ export default{
                 return;
             }
             let file = event.target.files[0];
-            this.course.topics[index].videos.push(file);
+            this.course.topics[index].files.push(file);
             let formData = new FormData();
             formData.append("video", file);
             let data = {
                 course_id : this.course.id,
                 topic_id : this.course.topics[index].id,
-                seq : this.course.topics[index].videos.length - 1
+                seq : this.course.topics[index].files.length - 1
             };
             formData.append("data", JSON.stringify(data));
             axios.post('api/courses/video', formData, {
@@ -130,6 +179,47 @@ export default{
                 }
             }).then( () => {
 
+            });
+        },
+
+        addAssignmnetFile : function(event, index){
+            if(!event.target.files.length){
+                return;
+            }
+            let file = event.target.files[0];
+            console.log(file)
+            this.course.topics[index].files.push(file);
+        },
+
+        saveAssignment : function(index){
+            if(index != this.selected){
+                this.selected = index;
+                return;
+            }
+            let me = this;
+            console.log(this.course.topics[index]);
+            let formData = new FormData();
+            let assignment = this.course.topics[index];
+            if(assignment.files.length){
+                formData.append("pdf", assignment.files[0]);
+            }
+            let data = {
+                course_id : this.course.id,
+                topic_id : assignment.id,
+                seq : 0,
+                title : assignment.title,
+                content : assignment.content,
+                marks : assignment.marks
+            };
+            console.log(data);
+            formData.append("data", JSON.stringify(data));
+            axios.post('api/courses/assignment', formData, {
+                headers: {
+                'Content-Type': 'multipart/form-data'
+                }
+            }).then( (res) => {
+                console.log(res);
+                me.selected = -1;
             });
         },
 
@@ -155,7 +245,25 @@ export default{
                 title : "",
                 content : "",
                 html : "",
-                videos : []
+                files : [],
+                type : "topic"
+            })
+            this.selected = this.course.topics.length-1;
+        },
+
+        addAssignmnet : function(){            
+            let id = 1;
+            for(let i = 0; i < this.course.topics.length; i++){
+                id = Math.max(this.course.topics[i].id + 1, id);
+            }
+            this.course.topics.push({
+                id : id,
+                title : "",
+                content : "",
+                html : "",
+                files : [],
+                type : "assignment",
+                marks : 0
             })
             this.selected = this.course.topics.length-1;
         },
@@ -417,7 +525,36 @@ export default{
                     cursor: pointer;
                 }
             }
+            .assignment{
+                textarea{
+                    width : 100%;
+                    min-height: 200px;
+                    box-sizing: border-box;
+                    padding : 20px;
+                }
 
+                .marks{
+                    margin : 20px 0;
+                    display: flex;
+                    align-items: center;
+                    .caption{
+                        margin-right: 20px;
+                    }
+                    input{
+                        outline: none;
+                        padding : 10px;
+                        border: solid 1px $grey2;
+                        border-radius: 10px;
+                        width: 30px;
+                        text-align: center;
+                        transition : border-color .5s;
+                        &:focus{
+                            outline : none;
+                            border-color: $orange;
+                        }
+                    }
+                }
+            }
             .add-new{
                 padding-bottom: 70px;
                 padding-top : 50px;

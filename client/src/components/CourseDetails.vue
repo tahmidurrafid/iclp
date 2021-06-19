@@ -115,7 +115,7 @@
                         </div>
                         <div class="buttons">
                             <router-link to = "">
-                                <div class="enrollButton">
+                                <div v-if="!details.enrolled" class="enrollButton" @click="enroll()">
                                     <div>Enroll Now</div>
                                     <div>
                                         <i class="fa fa-chevron-circle-right"></i>
@@ -167,9 +167,29 @@ export default{
         axios.get('api/courses/' + this.$route.query.id).then( 
             response => {
                 this.details = response.data[0];
-                console.log(this.details[0])                
+                console.log(this.details[0]);
             }
         )
+
+        axios.get('api/courses/enrolled/' + this.$route.query.id).then(
+            (res) => {
+                if(res.data.enrolled){
+                    this.details.enrolled = true;
+                }
+            }
+        )
+    },
+
+    methods : {
+        enroll : function(){
+            console.log(this.details);
+            axios.post('api/courses/enroll/' + this.details.id).then( (res) => {
+                console.log(res);
+                if(res.data.success){
+                    this.details.enrolled = true;   
+                }
+            })
+        }
     }
 };
 </script>

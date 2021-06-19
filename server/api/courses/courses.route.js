@@ -2,16 +2,29 @@ const router = require("express").Router();
 const courses = require("./courses.controller");
 const {checkToken} = require("../../auth/token");
 
+//Get All Course
 router.get('/', courses.getAll);
+//Get all course Categories
 router.get('/categories', courses.categories);
+//Get Course Based on ID
 router.get('/:id', courses.get);
-router.get('/:id/all', courses.getFullCourse);
-router.post('/create', checkToken, courses.create);
-router.post('/topic', checkToken, courses.saveTopic);
-router.post('/video', checkToken, courses.saveVideo);
-router.put('/content', checkToken, courses.updateContent);
+//Get all Course Details Based on ID
+router.get('/:id/all', checkToken, courses.getFullCourse);
 
 /************ INSTRUCTOR ************/
 router.get('/for/instructor', checkToken, courses.getAllForInstructor);
+//Create Course - instructor
+router.post('/create', checkToken, courses.create);
+//Save Topic by instructor
+router.post('/topic', checkToken, courses.saveTopic);
+//Uplaod video under a topic
+router.post('/video', checkToken, courses.saveVideo);
+//Uplaod video under a topic
+router.put('/content', checkToken, courses.updateContent);
+//Update course topic content
+router.post('/assignment', checkToken, courses.saveAssignment);
 
+/************ USER ************/
+router.post('/enroll/:id', checkToken, courses.enroll)
+router.get('/enrolled/:id', checkToken,  courses.enrolled )
 module.exports = router

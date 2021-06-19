@@ -12,6 +12,7 @@ import AdminPanel from './components/AdminPanel.vue'
 import CreateGame from './components/CreateGame.vue'
 import Login from './components/Login.vue'
 import Registration from './components/Registration.vue'
+import UserProfile from './components/UserProfile.vue'
 
 export default [
    { path : '/course', component: CourseView},
@@ -28,4 +29,5 @@ export default [
    { path : '/creategame', component : CreateGame},
    { path : '/login', component : Login},
    { path : '/registration', component : Registration},
+   { path : '/user/profile', component : UserProfile},
 ];

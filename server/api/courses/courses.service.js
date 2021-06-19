@@ -24,6 +24,45 @@ module.exports = {
         )
     },
 
+    saveAssignment : (data, callback) => {
+        console.log(data);
+        let withFile =  data.location.length;
+        queryString = {
+            withFile : {
+                str : `INSERT INTO assignment(id, course_id, brief, file_link, file_name, seq, total_mark, title) 
+                VALUES(${data.topic_id}, ${data.course_id}, ?, ?, ?, ${data.seq}, ${data.marks}, ?) 
+                ON DUPLICATE KEY UPDATE
+                brief = ?,
+                file_link = ?,
+                file_name = ?,
+                seq = ${data.seq},
+                total_mark = ${data.marks}, 
+                title = ?`,
+                param : [data.content, data.location,  data.name, data.title, 
+                    data.content, data.location, data.name, data.title]
+            },
+            withoutFile : {
+                str : `INSERT INTO assignment(id, course_id, brief, seq, total_mark, title) 
+                VALUES(${data.topic_id}, ${data.course_id}, ?, ${data.seq}, ${data.marks}, ?) 
+                ON DUPLICATE KEY UPDATE
+                brief = ?,
+                seq = ${data.seq},
+                total_mark = ${data.marks}, 
+                title = ?`,
+                param : [data.content, data.title,  data.content, data.title]
+            }
+        }
+
+        
+        db.query(withFile ? queryString.withFile.str :  queryString.withoutFile.str , 
+            withFile ? queryString.withFile.param : queryString.withoutFile.param , 
+            (err, result, fields) =>{
+                if(err)
+                    console.log(err);
+                callback(err, data);
+        })
+    },
+
     saveVideo : async (data, callback) => {
         let response = await query(`INSERT INTO courseMedia(course_id, topic_id, media_type, name) 
             VALUES(${data.course_id}, ${data.topic_id}, "mp4", "${data.name}")`);
@@ -100,13 +139,27 @@ module.exports = {
 
     },
 
-    getFullCourse : async (id, callback) => {
-        let course = await query(`SELECT * FROM course WHERE id = ${id}`);
+    getFullCourse : async (data, callback) => {
+        let course = await query(`SELECT * FROM course WHERE id = ${data.course_id}`);
         course = course[0];
 
-        let topics = await query(`SELECT * FROM courseTopic WHERE course_id = ${id} ORDER BY topic_id ASC`)
+        let topics = await query(`SELECT * FROM courseTopic WHERE course_id = ${data.course_id} ORDER BY topic_id ASC`)
         course.topics = topics;
-        let media = await query(`SELECT * FROM courseMedia WHERE course_id = ${id}`);
+        course.topics.map( (e) => {
+            e.type = "topic";
+            return e;
+        });
+
+        let enrolled = await query(`SELECT * FROM enrollment WHERE user_id = ${data.user.id} AND 
+                course_id = ${data.course_id}`);
+        course.enrolled = enrolled.length > 0;
+        let assignment = await query(`SELECT * FROM assignment WHERE course_id = ${data.course_id} ORDER BY id ASC`);
+        assignment.map( e => {
+            e.type = "assignment";
+            return e;
+        })
+        course.topics = course.topics.concat(assignment);
+        let media = await query(`SELECT * FROM courseMedia WHERE course_id = ${data.course_id}`);
         course.media = media;
         return course;
 
@@ -120,7 +173,7 @@ module.exports = {
                         instructor.name as i_name
                         FROM course c join user instructor on (c.instructor_id = instructor.id)
                         WHERE 1 = 1 AND
-                        c.id = ${data.id}
+                        c.id = ${data.course_id}
                         `,
             (error, results, fields) => {
                 if(error){
@@ -149,5 +202,26 @@ module.exports = {
             (err, results, fields) => {
                 callback(err, results);
             })
+    },
+
+    enroll : (data, callback) => {
+        console.log(data);
+        db.query(`INSERT INTO enrollment(user_id, course_id) VALUES(? , ?)`,
+            [data.user_id, data.course_id],
+            (err, res) => {
+                callback(err, res);
+            }
+        )
+    },
+    enrolled : (data, callback) => {
+        db.query(`SELECT * FROM enrollment WHERE user_id = ? AND course_id = ?`,
+        [data.user_id, data.course_id],
+        (err, res) => {
+            let ret = {
+                enrolled : res.length > 0
+            }
+            callback(err, ret);
+        }
+    )        
     }
 };
