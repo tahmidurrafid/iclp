@@ -11,67 +11,73 @@
                 </div>
             </div>
 
-            <div v-for="(topic, i) in course.topics" v-bind:key="topic.id" class="lecturelist">
-                <div class = "topic" v-if="topic.type == 'topic'">
-                    <div class="list-item">
-                        <div class="title"><input type = "text" v-model="topic.title" 
-                        placeholder="Your title goes here..."/> </div>
-                        <div><i class="fa" 
-                        v-bind:class="selected!=i? 'fa-edit': 'fa-save' " @click="saveTopic(i)"></i></div>
-                        <div><i class="fa fa-trash"></i></div>
-                    </div>
-                    <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
-                        <div class="media-list">
-                            <div v-for = "(video, j) in topic.files" v-bind:key="j" class="list-item">
-                                <div class="number">{{j}}</div>
-                                <div class = "icon"><i class="fa fa-file-movie-o"></i></div>
-                                <div class="media-name">{{video.name}}</div>
+            
+            <div class="lecturelist">
+                <div class = "item-wrapper" v-for="(topic, i) in course.topics" v-bind:key="topic.id">
+                    <div class = "topic" v-if="topic.type == 'topic'">
+                        <div class="list-item">
+                            <div class="title"><input type = "text" v-model="topic.title" 
+                            placeholder="Your title goes here..."/> </div>
+                            <div class = "action" @click="saveTopic(i)">
+                                <i class="fa" v-bind:class="selected!=i? 'fa-edit': 'fa-save' "></i>
                             </div>
+                            <div  class = "action" @click="deleteTopic(i)"><i class="fa fa-trash"></i></div>
                         </div>
-                        <div class="add-media" >
-                            <label :for="'addVideo' + '_' + i">
-                                <input type = "file" :id="'addVideo' + '_' + i" @change="fileChanged($event ,i)"/>                        
-                                <span><i class="fa fa-plus-circle"></i></span>
-                                <span> Add Video</span>
-                            </label>
-                        </div>
-
-                        <quill-editor
-                            :ref="'quill_' + i"
-                            v-model="topic.html"
-                            @ready="onEditorReady(i)"
-                        />
-                    </div>
-                </div>
-                <div class = "assignment" v-if="topic.type == 'assignment'">
-                    <div class="list-item">
-                        <div class="title"><input type = "text" v-model="topic.title" 
-                        placeholder="Your title goes here..."/> </div>
-                        <div><i class="fa" 
-                        v-bind:class="selected!=i? 'fa-edit': 'fa-save' " @click="saveAssignment(i)"></i></div>
-                        <div><i class="fa fa-trash"></i></div>
-                    </div>
-                    <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
-                        <div class="media-list">
-                            <div v-for = "(file, j) in topic.files" v-bind:key="j" class="list-item">
-                                <div class="number">{{j}}</div>
-                                <div class = "icon"><i class="fa fa-file-movie-o"></i></div>
-                                <div class="media-name">{{file.name}}</div>
+                        <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
+                            <div class="media-list">
+                                <div v-for = "(video, j) in topic.files" v-bind:key="j" class="list-item">
+                                    <div class="number">{{j}}</div>
+                                    <div class = "icon"><i class="fa fa-file-movie-o"></i></div>
+                                    <div class="media-name">{{video.name}}</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="add-media" >
-                            <label :for="'addFile' + '_' + i">
-                                <input type = "file" :id="'addFile' + '_' + i" @change="addAssignmnetFile($event ,i)"/>                        
-                                <span><i class="fa fa-plus-circle"></i></span>
-                                <span> Add File</span>
-                            </label>
-                        </div>
-                        <textarea placeholder="Your Assignmnet description goes here..." v-model="topic.content">
+                            <div class="add-media" >
+                                <label :for="'addVideo' + '_' + i">
+                                    <input type = "file" :id="'addVideo' + '_' + i" @change="fileChanged($event ,i)"/>                        
+                                    <span><i class="fa fa-plus-circle"></i></span>
+                                    <span> Add Video</span>
+                                </label>
+                            </div>
 
-                        </textarea>
-                        <div class = "marks">
-                            <div class = "caption">Marks: </div>
-                            <input type = "text" v-model="topic.marks" />
+                            <quill-editor
+                                :ref="'quill_' + i"
+                                v-model="topic.html"
+                                @ready="onEditorReady(i)"
+                            />
+                        </div>
+                    </div>
+                    <div class = "assignment" v-if="topic.type == 'assignment'">
+                        <div class="list-item">
+                            <span class = "assignment-pre">Assignment: </span>                            
+                            <div class="title">
+                                <input type = "text" v-model="topic.title" placeholder="Your title goes here..."/> </div>
+                            <div class = "action" @click="saveAssignment(i)">
+                                <i class="fa" v-bind:class="selected!=i? 'fa-edit': 'fa-save' " ></i>
+                            </div>
+                            <div class = "action" @click="deleteTopic(i)"><i class="fa fa-trash"></i></div>
+                        </div>
+                        <div class="media" v-bind:class="selected!=i? 'collapsed': '' ">
+                            <div class="media-list">
+                                <div v-for = "(file, j) in topic.files" v-bind:key="j" class="list-item">
+                                    <div class="number">{{j}}</div>
+                                    <div class = "icon"><i class="fa fa-file-movie-o"></i></div>
+                                    <div class="media-name">{{file.name}}</div>
+                                </div>
+                            </div>
+                            <div class="add-media" >
+                                <label :for="'addFile' + '_' + i">
+                                    <input type = "file" :id="'addFile' + '_' + i" @change="addAssignmnetFile($event ,i)"/>                        
+                                    <span><i class="fa fa-plus-circle"></i></span>
+                                    <span> Add File</span>
+                                </label>
+                            </div>
+                            <textarea placeholder="Your Assignmnet description goes here..." v-model="topic.content">
+
+                            </textarea>
+                            <div class = "marks">
+                                <div class = "caption">Marks: </div>
+                                <input type = "text" v-model="topic.marks" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -153,8 +159,10 @@ export default{
                     this.course.topics.push(topic);
                 }
             }
+            this.course.topics.sort((a, b) => {
+                return a.id - b.id;
+            })
         })
-
 
     },
     methods : {
@@ -189,6 +197,28 @@ export default{
             let file = event.target.files[0];
             console.log(file)
             this.course.topics[index].files.push(file);
+        },
+
+        deleteTopic : function(index){
+            let course = this.course;
+            let data = {
+                course_id : course.id,
+                topic_id : course.topics[index].id,
+                type : course.topics[index].type
+            }
+            if(data.type == "topic"){
+                axios.delete(`api/courses/${data.course_id}/topic/${data.topic_id}`).then( (res) =>{
+                    if(res.data.success == 1){
+                        course.topics.splice(index, 1);
+                    }
+                } );
+            }else if(data.type == "assignment"){
+                axios.delete(`api/courses/${data.course_id}/assignment/${data.topic_id}`).then( (res) =>{
+                    if(res.data.success == 1){
+                        course.topics.splice(index, 1);
+                    }
+                } );                
+            }
         },
 
         saveAssignment : function(index){
@@ -389,8 +419,15 @@ export default{
                 font-size: 25px;
                 font-weight: 600;
                 color: #545454;
-                border: none;
+                border: solid 1px $grey3;
+                padding : 5px 20px;
+                box-sizing: border-box;
                 width: 100%;
+                outline: none;
+                transition: border-color .3s;
+                &:focus{
+                    border-color: $orange;
+                }                
             }
             .descriptionlevel{
                 margin-top: 30px;
@@ -404,54 +441,77 @@ export default{
                 height: 40px;
             }
             .description{
-               width: 100%;
-               height: 200px;
-               border: 1px solid #CBCBCB;
+                width: 100%;
+                height: 200px;
+                border: 1px solid #CBCBCB;
+                padding: 20px;               
+                box-sizing: border-box;
+                outline: none;
+                transition: border-color .3s;
+                &:focus{
+                    border-color: $black;
+                }
             }
             .description::placeholder {
                 font-style: italic;
                 color: #373737;
-                 padding: 20px;
             }
             .lecturelist{
                 margin-top: 70px;
-                .list-item{
 
+                .item-wrapper{
+                    margin: 20px 0px;
+                }
+
+                .list-item{
                     input{
                         background-color: transparent;
                         border: none;
                         outline: none;
                         font-weight: $semibold;
-                        display: block;
+                        // display: block;
                         width: 100%;
                     }
 
                     display: flex;
                     justify-content: space-between;
-                    background-color: #EFEFEF;
-                    border: 1px solid #CBCBCB;
-                    padding: 7px;
-                    margin: 20px 0px;
-                    padding-left: 50px;
-                    padding-right: 30px;
+                    align-items: center;
+                    background-color: $greyLight;
+                    padding: 0 30px;
                     border-radius: 5px;
                     color: #040404;
                     font-size: 14px;
                     font-weight: 450;
+                    min-height: 50px;
+
                     .title{
-                        width: 88%;
+                        flex-grow: 1;
                     }
-                    .fa-save{
-                        color: #FC5A34;
-                    }
-                    i{
-                        cursor:pointer;
+                    .action{
+                        $dim : 30px;
+                        width: $dim;
+                        height: $dim;
+                        line-height: $dim;
+                        text-align: center;
+                        border-radius: 100%;
+                        background-color: $orange;
+                        color : $white;
+                        margin-left: 15px;
+                        transition: color .3s, background-color .3s;
+                        box-sizing: border-box;
+                        cursor: pointer;
+                        &:hover{
+                            color : $orange;
+                            background-color : transparent;
+                            border: solid 1px $orange;
+                        }
                     }
                 }
             }
             .media{
                 margin-left: 60px;
-                margin-top: 60px;
+                margin-top: 40px;
+                margin-bottom: 6s0px;
                 .media-list{
                     width: 400px;
                     font-weight: 500;
@@ -503,8 +563,8 @@ export default{
                     }
                     font-size: 16px;
                     cursor: pointer;
-                    margin-top: 30px;                    
-                    margin-bottom : 50px;
+                    margin-top: 10px;
+                    margin-bottom : 30px;
                 }
                 .editor{
                     margin-top: 30px;
@@ -526,6 +586,12 @@ export default{
                 }
             }
             .assignment{
+                .list-item{
+                    background-color: $grey3;
+                    .assignment-pre{
+                        padding-right: 10px;
+                    }
+                }
                 textarea{
                     width : 100%;
                     min-height: 200px;
@@ -557,7 +623,7 @@ export default{
             }
             .add-new{
                 padding-bottom: 70px;
-                padding-top : 50px;
+                padding-top : 20px;
                 .plus{
                     $dim : 50px;
                     width : $dim;

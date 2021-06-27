@@ -26,14 +26,11 @@
                     </div>
                 </a>
                 <div class = "dropdown" v-if="dropdown">
-                    <div class = "item">
-                        <a href = "/moderator/dashboard"><i class = "fa fa-user-plus"></i>Moderator</a>
+                    <div class = "item" v-if="$login.user.type == 'instructor'">
+                        <router-link to = "/instructordashboard/"><i class = "fa fa-align-center"></i>Dashboard</router-link>
                     </div>
-                    <div class = "item">
-                        <a href = "/moderator/dashboard"><i class = "fa fa-dashboard"></i>Dashboard</a>
-                    </div>
-                    <div class = "item">
-                        <a href = "/moderator/dashboard"><i class = "fa fa-user-circle"></i>Profile</a>
+                    <div class = "item" v-if="$login.user.type != 'instructor'">
+                        <router-link to = "/user/profile/"><i class = "fa fa-user-circle"></i>Profile</router-link>
                     </div>
                     <div class = "item">
                         <a href = "/logout" 
@@ -70,7 +67,7 @@ export default{
         }
     },
     mounted(){
-        console.log("hello");
+
     },
     methods : {
         signout : function(){
@@ -160,8 +157,10 @@ export default{
                     background-color: $white;
                     right: -50px;
                     top : 100%;
-                    border : solid 1px $greyLight;
+                    box-shadow: 1px 5px 9px rgb(0 0 0 / 9%);
+                    border-radius: 21px;
                     border-top: none;
+                    overflow: hidden;
                     .item{
                         a{
                             i{
@@ -176,7 +175,8 @@ export default{
                             display: block;
                             box-sizing: border-box;
                             &:hover{
-                                color: $orange;
+                                background-color: $orange;
+                                color : $white;
                             }
                         }
                     }

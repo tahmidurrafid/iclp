@@ -5,8 +5,8 @@
                 <div class = "wrap">
                     <div class = "heading"><span class = "marker"></span><span class = "text">Search</span></div>
                     <div class = "search">
-                        <input type = "text" placeholder="Search for courses"/>
-                        <div class = "button"><i class = "fa fa-search"></i></div>
+                        <input type = "text" v-model="search" placeholder="Search for courses"/>
+                        <div class = "button" @click="updateQuery()"><i class = "fa fa-search"></i></div>
                     </div>                    
                 </div>
             </div>
@@ -16,8 +16,8 @@
                     <div class = "list">
                         <div v-for = "(item, i) in categories" v-bind:key="i"
                         class = "list-item" 
-                        v-bind:class="{'selected' : (item.id == selected_category)}" 
-                        @click="selected_category=item.id; updateQuery()">
+                        v-bind:class="{'selected' : (selected_category.includes(item.id))}" 
+                        @click="updateQuery(item.id)">
                             <span class = "caption">{{item.value}}</span>
                             <span class = "count">{{item.count}}</span>
                         </div>
@@ -64,14 +64,23 @@ export default{
             categories : [
             ],
 
-            selected_category : 0,
-            
+            selected_category : [],
+            search : "",
             courses : [
 
             ]
         }
     },
     mounted(){
+        if(this.$route.query.category){
+            if(Array.isArray(this.$route.query.category)){
+                this.selected_category = this.$route.query.category.map( (elem) => {
+                    return elem = parseInt(elem, 10);
+                });
+            }else{
+                this.selected_category.push(parseInt(this.$route.query.category, 10));
+            }
+        }
         axios.get('api/courses', {params : this.$route.query}).then( response => {
             this.courses = response.data;
         });
@@ -80,17 +89,23 @@ export default{
         })
     },
     methods : {
-        updateQuery : function(){
+        updateQuery : function(id){
             let query = {};
-            if(this.selected_category != 0){
-                query.category = this.selected_category;
+            if(id){
+                if(this.selected_category.includes(id)){
+                    this.selected_category.splice(this.selected_category.findIndex(
+                        (elem) => elem.id == id
+                    ), 1)
+                }else{
+                    this.selected_category.push(id)
+                }
             }
+            query.category = this.selected_category;            
+            query.search = this.search;
             this.$router.push({query : query });
-
             axios.get('api/courses', {params : this.$route.query}).then( response => {
                 this.courses = response.data;
             });
-
         }
     }
 };

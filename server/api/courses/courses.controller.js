@@ -241,6 +241,41 @@ module.exports = {
             console.log(result);
             res.json(result);
         })
+    },
+
+    deleteTopic : (req, res) => {
+        let data = {
+            req : req.params,
+            user : req.user.result
+        }
+        coursesService.deleteTopic(data, (err, result) => {
+            if(err){
+                res.json({
+                    success : 0,
+                })
+            }else{
+                res.json({
+                    success : 1,
+                })
+            }
+        })
+    },
+    deleteAssignment : (req, res) => {
+        let data = {
+            req : req.params,
+            user : req.user.result
+        }
+        coursesService.deleteAssignment(data, (err, result) => {
+            if(err){
+                res.json({
+                    success : 0,
+                })
+            }else{
+                res.json({
+                    success : 1,
+                })
+            }
+        })
     }
 
 }

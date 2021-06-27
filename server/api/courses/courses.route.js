@@ -23,6 +23,10 @@ router.post('/video', checkToken, courses.saveVideo);
 router.put('/content', checkToken, courses.updateContent);
 //Update course topic content
 router.post('/assignment', checkToken, courses.saveAssignment);
+//Delete course topic
+router.delete('/:course_id/topic/:topic_id', checkToken, courses.deleteTopic);
+//Delete course topic
+router.delete('/:course_id/assignment/:topic_id', checkToken, courses.deleteAssignment);
 
 /************ USER ************/
 router.post('/enroll/:id', checkToken, courses.enroll)

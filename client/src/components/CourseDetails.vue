@@ -72,16 +72,11 @@
                 <div class="wrap">
                     <div class="title"><span class="marker"></span><span class="text">Course Contents</span></div>
                     <div class="list">
-                        <div v-for = "(item, i) in courseContents" v-bind:key="i" class = "list-item" @click="item.shouldExpand=!item.shouldExpand">
+                        <div v-for = "(item, i) in details.topics" v-bind:key="i" class = "list-item" @click="item.shouldExpand=!item.shouldExpand">
                             <div class="contentTitle">
                                 <span>{{item.title}}</span>
                                 <span class = "count" v-if="!item.shouldExpand"><i class="fa fa-chevron-circle-up"></i></span>
                                 <span class = "count" v-if="item.shouldExpand"><i class="fa fa-chevron-circle-down"></i></span>
-                            </div>
-                            <div class="sublist" v-if="item.shouldExpand"> 
-                                <div v-for = "(subitem, j) in item.sublist" v-bind:key="j" class="sub-list-item">
-                                    <span>{{subitem}}</span>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -97,7 +92,7 @@
                         <div class="instructorDetails">
                             <div class="instructorname">
                                 <div><b>Instructor</b></div>
-                                <div>Shafin Khadem</div>
+                                <div>{{details.i_name}}</div>
                             </div>
                             <div class="instructorDescription">
                                 Object-Oriented programming (OOP) refers to a type of programming in which programmers define the data type of a data structure and the type of operations that can be applied to the data structure.
@@ -114,22 +109,28 @@
                             You can enroll into this course now or save it for later.
                         </div>
                         <div class="buttons">
-                            <router-link to = "">
-                                <div v-if="!details.enrolled" class="enrollButton" @click="enroll()">
-                                    <div>Enroll Now</div>
+                            <div v-if="!isEnrolled" class="enrollButton" @click="enroll()">
+                                <div>Enroll Now</div>
+                                <div>
+                                    <i class="fa fa-chevron-circle-right"></i>
+                                </div>
+                            </div>
+                            <router-link v-if="isEnrolled" :to = "'/course/complete?id=' + details.id">                            
+                                <div class="enrollButton" @click="enroll()">
+                                    <div>View Course</div>
                                     <div>
                                         <i class="fa fa-chevron-circle-right"></i>
                                     </div>
                                 </div>
                             </router-link>
-                            <router-link to = "">
+                            <!-- <router-link to = "">
                                 <div class="saveButton">
                                     <div>Save For Later</div>
                                     <div>
                                         <i class="fa fa-bookmark-o"></i>
                                     </div>
                                 </div>
-                            </router-link>
+                            </router-link> -->
                         </div>
                     </div>
                 </div>
@@ -147,34 +148,24 @@ export default{
     data(){
         return{
             activePart: 'CourseDescription',
-            courseContents : [
-                {title : 'Introduction to Object Oriented Programming',shouldExpand : false,
-                sublist: []},
-                {title : 'Review Some Java Basics',shouldExpand : false,
-                sublist: ['Java Basic Input Output','Basic Variable And Data Types','Conditioning And If Else Statement','Loops : For, While, Do While']},
-                {title : 'Introduction to Java Class',shouldExpand : false,
-                sublist: []},
-                {title : 'Object Oriented Programming With Java',shouldExpand : false,
-                sublist: []}
-
-            ],
             details : {
-
-            }
+            },
+            isEnrolled : false
         }
     },
     mounted(){
         axios.get('api/courses/' + this.$route.query.id).then( 
             response => {
                 this.details = response.data[0];
-                console.log(this.details[0]);
             }
         )
 
         axios.get('api/courses/enrolled/' + this.$route.query.id).then(
             (res) => {
+                console.log("Enrollment");
+                console.log(res);
                 if(res.data.enrolled){
-                    this.details.enrolled = true;
+                    this.isEnrolled = true;
                 }
             }
         )
@@ -182,7 +173,6 @@ export default{
 
     methods : {
         enroll : function(){
-            console.log(this.details);
             axios.post('api/courses/enroll/' + this.details.id).then( (res) => {
                 console.log(res);
                 if(res.data.success){
@@ -540,6 +530,8 @@ export default{
                                 padding : 7px 20px;
                                 display: flex;
                                 justify-content: space-between;
+                                color : white;
+                                cursor: pointer;
                             }
                             .saveButton{
                                 width: 170px;

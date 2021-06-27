@@ -6,16 +6,51 @@ const query = util.promisify(db.query).bind(db);
 
 module.exports = {
     getAll : (data, callback) => {
+        console.log(data.search)
+        let categoryFilter = "";
+        let searchString = "";
+        let searchParams = [];
+        if(data.search){
+            let splits = data.search.split(" ");
+            if(splits.length){
+                searchString = "AND ("
+                for(let i = 0; i < splits.length; i++){
+                    searchString += "c.title LIKE ? ";
+                    if(i != splits.length - 1){
+                        searchString += "OR ";
+                    }else{
+                        searchString += ")";
+                    }
+                    splits[i] = "%" + splits[i] + "%"; 
+                }
+                searchParams = splits;                
+            } 
+        }
+        console.log(searchString);
+        if(data.category && data.category.length){
+            categoryFilter = "AND c.category IN (";
+            for(let i = 0; i < data.category.length; i++){
+                categoryFilter += data.category[i];
+                if(i != data.category.length -1){
+                    categoryFilter += ', ';
+                }
+            }
+            categoryFilter += ")";
+            console.log(categoryFilter);
+        }
         db.query(`SELECT c.id as id,
                         c.title as title,
                         c.category as category,
                         c.brief as brief
                         FROM course c
                         WHERE 1 = 1
-                        ${data.category? 'AND c.category = '+ data.category : ''}
+                        ${categoryFilter} ${searchString}
                         `,
+                        searchParams,
+
             (error, results, fields) => {
                 if(error){
+                    console.log(error);
                     return callback(error);
                 }else{
                     return callback(null, results);
@@ -165,7 +200,9 @@ module.exports = {
 
     },
 
-    get : (data, callback) => {
+    get : async (data, callback) => {
+        let topics = await query(`SELECT topic_id, title FROM courseTopic WHERE course_id = ${data.course_id}
+            ORDER BY topic_id ASC`);
         db.query(`SELECT c.id as id,
                         c.title as title,
                         c.category as category,
@@ -179,6 +216,8 @@ module.exports = {
                 if(error){
                     return callback(error);
                 }else{
+                    results[0].topics = topics;
+                    console.log(results);
                     return callback(null, results);
                 }
             }
@@ -216,12 +255,22 @@ module.exports = {
     enrolled : (data, callback) => {
         db.query(`SELECT * FROM enrollment WHERE user_id = ? AND course_id = ?`,
         [data.user_id, data.course_id],
-        (err, res) => {
-            let ret = {
-                enrolled : res.length > 0
+            (err, res) => {
+                let ret = {
+                    enrolled : res.length > 0
+                }
+                callback(err, ret);
             }
-            callback(err, ret);
-        }
-    )        
+        )        
+    },
+    deleteTopic : async (data, callback) => {
+        let res = query(`DELETE FROM courseMedia WHERE course_id = ${data.req.course_id} AND topic_id = ${data.req.topic_id}`);
+        res = query(`DELETE FROM courseTopic WHERE course_id = ${data.req.course_id} AND topic_id = ${data.req.topic_id}`);
+        callback(null, {success : 1});
+
+    },
+    deleteAssignment : async (data, callback) => {
+        res = query(`DELETE FROM assignment WHERE course_id = ${data.req.course_id} AND id = ${data.req.topic_id}`);
+        callback(null, {success : 1});
     }
 };
