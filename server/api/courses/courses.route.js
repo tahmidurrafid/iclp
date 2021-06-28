@@ -31,4 +31,5 @@ router.delete('/:course_id/assignment/:topic_id', checkToken, courses.deleteAssi
 /************ USER ************/
 router.post('/enroll/:id', checkToken, courses.enroll)
 router.get('/enrolled/:id', checkToken,  courses.enrolled )
+router.get('/for/user', checkToken, courses.getAllForUser);
 module.exports = router

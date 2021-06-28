@@ -19,8 +19,8 @@
                 <div class = "item">
                     <div class = "statement">
                         <div class = "left">
-                                <span class = "seq">1</span>
-                                <span>How object oriented programming concept is helpful in Software Development?</span>
+                            <span class = "seq">1</span>
+                            <span>How object oriented programming concept is helpful in Software Development?</span>
                         </div>
                         <div class = "right">
                             <a class = "edit">

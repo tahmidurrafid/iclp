@@ -4,6 +4,10 @@
         <div class = "wrap">
             <div class = "about">
                 <input type="text" class="coursetitle" v-model="course.title" placeholder="Course Title Goes Here" /> 
+            <select class="category" v-model="course.category" @change="categoryChange()">
+                    <option disabled value="0">Select a Category</option>
+                    <option v-for="item in categories" v-bind:key="item.id" :value="item.id"> {{item.value}} </option>
+                </select>
                 <div class="descriptionlevel">Description</div>
                 <textarea class="description" v-model="course.brief" placeholder="Put your course description here ..." ></textarea>
                 <div class = "flex-elem">
@@ -108,16 +112,22 @@ export default{
                 id : 0,
                 title : "",
                 brief : "",
-
+                category : "0",
                 topics : [
                 ]
             },
             selected : -1,
-            files : ""
+            files : "",
+            categories : [],
         }
     },
 
-    mounted(){
+    async mounted(){
+
+        let categories = await axios.get("api/courses/categories");
+        categories = categories.data;
+        this.categories = categories;
+
         if(!this.$route.query.id){
             return;
         }
@@ -128,6 +138,7 @@ export default{
             console.log(data);
             this.course.title = data.title;
             this.course.brief = data.brief;
+            this.course.category = data.category;
             for(let i in data.topics){
                 let content = data.topics[i].content;
                 if(data.topics[i].type == "topic"){
@@ -166,6 +177,10 @@ export default{
 
     },
     methods : {
+
+        categoryChange : function(){
+            console.log(this.course.category)
+        },
 
         fileChanged : function(event, index){
             if(!event.target.files.length){
@@ -428,6 +443,24 @@ export default{
                 &:focus{
                     border-color: $orange;
                 }                
+            }
+            .category{
+                color: $black;
+                border: solid 1px $grey3;
+                background-color : $greyLight;
+                padding : 10px 15px;
+                border-radius: 10px;
+                font-size: $font15;   
+                line-height: 50px;
+                margin-top : 30px;
+                outline: none;
+                transition: border .3s;
+                &:focus{
+                    border: solid 1px $black;
+                }
+                option{ 
+                    padding : 10px;
+                }
             }
             .descriptionlevel{
                 margin-top: 30px;

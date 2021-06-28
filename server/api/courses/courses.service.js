@@ -114,16 +114,18 @@ module.exports = {
     },
 
     create : (data, callback) => {
-        let queryString = `INSERT INTO course(title, brief, instructor_id) 
-        VALUES(?, ?, ?)`;
-        let param = [data.body.title, data.body.brief, data.user.result.id];
+        let queryString = `INSERT INTO course(title, brief, instructor_id, category) 
+        VALUES(?, ?, ?, ?)`;
+        console.log(data.body);
+        let param = [data.body.title, data.body.brief, data.user.result.id, data.body.category];
         console.log(param);
         if(data.body.id != 0){
             queryString = `UPDATE course SET 
-                title = "${data.body.title}", 
-                brief =  "${data.body.brief}"
-                WHERE id = ${data.body.id}`;
-                param = [data.body.title, data.body.brief, data.body.id]
+                title = ?, 
+                brief =  ?,
+                category =  ?
+                WHERE id = ?`;
+                param = [data.body.title, data.body.brief ,data.body.category, data.body.id]
         }
         db.query( queryString,
             param,
@@ -238,6 +240,13 @@ module.exports = {
     },
     getAllForInstructor : (data, callback) => {
         db.query(`SELECT * FROM course WHERE instructor_id = ${data.user_id}`, 
+            (err, results, fields) => {
+                callback(err, results);
+            })
+    },
+    getAllForUser : (data, callback) => {
+        db.query(`SELECT * FROM course JOIN enrollment on (course.id = enrollment.course_id) WHERE 
+            user_id = ${data.user_id}`, 
             (err, results, fields) => {
                 callback(err, results);
             })

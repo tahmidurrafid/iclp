@@ -208,6 +208,21 @@ module.exports = {
         });
     },
 
+    getAllForUser : (req, res) => {
+        let data = {
+            user_id : req.user.result.id,
+        }
+        coursesService.getAllForUser(data, (err, result) => {
+            if(err){
+                res.json({
+                    success : 0
+                })
+            }else{
+                res.json(result)
+            }
+        });
+    },
+
     enroll : (req, res) => {
         let data = {
             course_id : req.params.id,

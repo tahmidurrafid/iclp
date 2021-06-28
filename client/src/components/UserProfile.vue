@@ -25,14 +25,14 @@
             </div>
             <div class = "yourCourses" v-if="activePart==='YourCourses'">
                 <div class = "wrap">
-                    <div class = "title"><span class = "marker"></span><span class = "text">Courses You have created</span></div>
+                    <div class = "title"><span class = "marker"></span><span class = "text">Courses You have enrolled</span></div>
                     <hr class="horizontalLine">
                     <div class="course-list">
                         <div v-for = "(item, i) in courses" v-bind:key="i" class="list-item">
                             <span class="courseID">Course ID : {{item.id}}</span>
                             <span class="courseTitle">
                                 <span class="course-title">{{item.title}}</span>
-                                <router-link class = "button" :to = "'createcourse?id=' + item.id">View</router-link>
+                                <router-link class = "button" :to = "'/course/complete?id=' + item.id">View</router-link>
                             </span>
                             <hr class="horizontalLine">
                         </div>
@@ -113,7 +113,7 @@ export default{
         }
     },
     mounted(){
-        axios.get('api/courses/for/instructor').then(res => {
+        axios.get('api/courses/for/user').then(res => {
             this.courses = res.data;
         })
     }
