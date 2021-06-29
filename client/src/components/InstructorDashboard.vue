@@ -24,9 +24,13 @@
                 </div>
             </div>
             <div class = "yourCourses" v-if="activePart==='YourCourses'">
+
                 <div class = "wrap">
                     <div class = "title"><span class = "marker"></span><span class = "text">Courses You have created</span></div>
                     <hr class="horizontalLine">
+                    <div v-if="courseLoading" class = "loader">
+                        <div class = "loading"></div>
+                    </div>
                     <div class="course-list">
                         <div v-for = "(item, i) in courses" v-bind:key="i" class="list-item">
                             <span class="courseID">Course ID : {{item.id}}</span>
@@ -104,6 +108,7 @@ export default{
             ] ,
             courses : [
             ]  ,
+            courseLoading : true,
             reviews : [
                 {courseID : 'CSE11100',name:'Rabeeb Ibrat',stars:5,description:'Even slightly believable. If you are going use a passage of Lorem Ipsum need some Proin gravida nibh vel velit auctor aliquet.aenean sollicitudin, lorem quis bibendum auctor...'},
                 {courseID : 'CSE11100',name:'Rabeeb Ibrat',stars:5,description:'Even slightly believable. If you are going use a passage of Lorem Ipsum need some Proin gravida nibh vel velit auctor aliquet.aenean sollicitudin, lorem quis bibendum auctor...'},
@@ -115,12 +120,24 @@ export default{
     mounted(){
         axios.get('api/courses/for/instructor').then(res => {
             this.courses = res.data;
+            this.courseLoading = false;
         })
     }
 };
 </script>
 
 <style lang = "scss" scoped>
+
+    @import "../scss/_variables.scss";
+
+    .loader{
+        padding : 100px 0;
+        .loading{
+            @include loader;
+            margin : auto;
+        }
+    }
+
     .marker{
         display: block;
         height : 3px;

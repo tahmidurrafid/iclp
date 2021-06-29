@@ -146,3 +146,32 @@ $bold : 700;
     padding : 0 20px ;
     line-height: 40px;
 }
+
+@mixin loader{
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid $orange;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+}
+
+@mixin loader-small{
+    @include loader;    
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid $orange;
+    width: 25px;
+    height: 25px;    
+}
+  
+  /* Safari */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

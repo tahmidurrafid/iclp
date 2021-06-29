@@ -28,7 +28,13 @@
                 </div>
             </div>
             <div class = "courseDescription" v-if="activePart==='CourseDescription'">
+
                 <div class = "wrap">
+
+                    <div class = "loader" v-if="loading">
+                        <div class = "loading"></div>
+                    </div>
+
                     <div class = "title"><span class = "marker"></span><span class = "text">{{details.title}}</span></div>
                     <div class = "description">
                         {{details.brief}}
@@ -150,13 +156,15 @@ export default{
             activePart: 'CourseDescription',
             details : {
             },
-            isEnrolled : false
+            isEnrolled : false,
+            loading : true
         }
     },
     mounted(){
         axios.get('api/courses/' + this.$route.query.id).then( 
             response => {
                 this.details = response.data[0];
+                this.loading = false;
             }
         )
 
@@ -173,10 +181,11 @@ export default{
 
     methods : {
         enroll : function(){
+            console.log("Enrolling");
             axios.post('api/courses/enroll/' + this.details.id).then( (res) => {
-                console.log(res);
                 if(res.data.success){
                     this.details.enrolled = true;   
+                    this.isEnrolled = true;
                 }
             })
         }
@@ -185,6 +194,17 @@ export default{
 </script>
 
 <style lang = "scss" scoped>
+
+    @import "../scss/_variables.scss";
+
+    .loader{
+        padding-top : 50px;
+        .loading{
+            @include loader;
+            margin : auto;
+        }
+    }
+
     .marker{
         display: block;
         height : 3px;

@@ -30,7 +30,11 @@
             <div class = "heading">Recommended Course For You</div>
 
             <div class = "course-list">
-                <div v-for="course in courses" :key="course.id" class = "list-item">
+
+                <div v-if="courseLoading" class = "loader">
+                    <div class = "loading"></div>
+                </div>
+                <div v-else v-for="course in courses" :key="course.id" class = "list-item">
                     <div class = "list-item-wrap">
                         <div class = "title"><span class = "marker"></span><span class = "text">{{course.title}}</span></div>
                         <div class = "description">
@@ -68,7 +72,8 @@ export default{
             search : "",
             courses : [
 
-            ]
+            ],
+            courseLoading : true
         }
     },
     mounted(){
@@ -83,6 +88,7 @@ export default{
         }
         axios.get('api/courses', {params : this.$route.query}).then( response => {
             this.courses = response.data;
+            this.courseLoading = false;
         });
         axios.get('api/courses/categories').then( response => {
             this.categories = response.data;
@@ -103,8 +109,10 @@ export default{
             query.category = this.selected_category;            
             query.search = this.search;
             this.$router.push({query : query });
+            this.courseLoading = true;
             axios.get('api/courses', {params : this.$route.query}).then( response => {
                 this.courses = response.data;
+                this.courseLoading = false;                
             });
         }
     }
@@ -113,6 +121,19 @@ export default{
 
 <style lang = "scss" scoped>
     @import "../scss/_variables.scss";
+
+
+    .loader{
+        .loading{
+            @include loader;
+            margin : auto;
+        }
+        display: block;
+        width : 100%;
+        padding-top: 70px;
+        margin: auto;
+    }
+
     .marker{
         display: block;
         height : 3px;
@@ -218,7 +239,7 @@ export default{
 
         .courseItems{
             text-align: left;
-
+            flex-grow: 1;
             padding : 0 0 0 50px;
             .heading{
                 font-weight: 600;

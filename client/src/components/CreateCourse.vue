@@ -1,16 +1,22 @@
 <template>
     <div class="createCourse">
         <div class="heading"><img src="../assets/doubleLines.png" alt="">Create New Course<img class="flip" src="../assets/doubleLines.png" alt=""></div>
-        <div class = "wrap">
+        <div v-if="loading" class = "loader">
+            <div class = "loading"></div>
+        </div>
+        <div v-else class = "wrap">
             <div class = "about">
                 <input type="text" class="coursetitle" v-model="course.title" placeholder="Course Title Goes Here" /> 
-            <select class="category" v-model="course.category" @change="categoryChange()">
+                <select class="category" v-model="course.category" @change="categoryChange()">
                     <option disabled value="0">Select a Category</option>
                     <option v-for="item in categories" v-bind:key="item.id" :value="item.id"> {{item.value}} </option>
                 </select>
                 <div class="descriptionlevel">Description</div>
                 <textarea class="description" v-model="course.brief" placeholder="Put your course description here ..." ></textarea>
                 <div class = "flex-elem">
+                    <div v-if="saving" class = "loader-small">
+                        <div class = "loading"></div>
+                    </div>
                     <a class = "button solid white" @click="createCourse()">Save</a>
                 </div>
             </div>
@@ -119,6 +125,8 @@ export default{
             selected : -1,
             files : "",
             categories : [],
+            loading : true,
+            saving : false
         }
     },
 
@@ -129,6 +137,7 @@ export default{
         this.categories = categories;
 
         if(!this.$route.query.id){
+            this.loading = false;
             return;
         }
 
@@ -173,6 +182,7 @@ export default{
             this.course.topics.sort((a, b) => {
                 return a.id - b.id;
             })
+            this.loading = false;
         })
 
     },
@@ -269,8 +279,10 @@ export default{
         },
 
         createCourse : function(){
+            this.saving = true;
             axios.post("api/courses/create", this.course).then(
                 () => {
+                    this.saving = false;
                 }
             )
         },
@@ -391,6 +403,22 @@ export default{
 <style lang="scss" scoped>
     @import "../scss/_variables.scss";
 
+    .loader{
+        padding : 100px 0;
+        .loading{
+            @include loader;
+            margin : auto;
+        }
+    }
+
+    .loader-small{
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        .loading{
+            @include loader-small;
+        }
+    }
     .flex-elem{
         display: flex;
         justify-content: flex-end;

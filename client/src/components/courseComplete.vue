@@ -6,6 +6,11 @@
             <div class = "caption">
                 Course Contents
             </div>
+
+            <div class = "loader" v-if="loading">
+                <div class = "loading"></div>
+            </div>
+
             <div class= "topics">
                 <div v-for="(topic,i) in course.topics" v-bind:key="i" class = "topic">
                     <div class = "topic-title">
@@ -42,7 +47,8 @@ export default{
                 id : 0,
                 topics : []
             },
-            selected : -1
+            selected : -1,
+            loading : true
         }
     },
     mounted(){
@@ -58,6 +64,7 @@ export default{
                 item => item.media_type == "mp4" && item.topic_id == e.topic_id
             ) )
             console.log(this.course);
+            this.loading = false;
         })
     }
 
@@ -66,6 +73,15 @@ export default{
 
 <style lang = "scss" scoped>
     @import "../scss/_variables.scss";
+
+
+    .loader{
+        padding-top : 50px;
+        .loading{
+            @include loader;
+            margin : auto;
+        }
+    }
 
     @mixin caption{
         font-size: $font20;
