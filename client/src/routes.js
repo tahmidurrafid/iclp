@@ -22,7 +22,7 @@ export default [
    { path : '/instructordashboard', component: InstructorDashboard},
    { path : '/instructordashboard/createcourse', component: CreateCourse},
    { path : '/takequiz', component : TakeQuiz} ,
-   { path : '/submitassignment', component : SubmitAssignment},
+   { path : '/course/submitassignment', component : SubmitAssignment},
    { path : '/setquiz', component : SetQuiz},
    { path : '/playground', component : Playground},
    { path : '/admin', component : AdminPanel},

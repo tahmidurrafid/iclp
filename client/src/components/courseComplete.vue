@@ -13,22 +13,35 @@
 
             <div class= "topics">
                 <div v-for="(topic,i) in course.topics" v-bind:key="i" class = "topic">
-                    <div class = "topic-title">
-                        <div class = "text">{{topic.title}} </div>
-                        <div class = "actions">
-                            <a class = "expand" @click="selected = (selected == i)? -1 : i">
-                                <i class="fa" v-bind:class="selected == i ? 'fa-angle-up' : 'fa-angle-down' "></i>
-                            </a>
+                    <div class = "topic-wrapper" v-if = "topic.type=='topic'">
+                        <div class = "topic-title">
+                            <div class = "text">{{topic.title}} </div>
+                            <div class = "actions">
+                                <a class = "expand" @click="selected = (selected == i)? -1 : i">
+                                    <i class="fa" v-bind:class="selected == i ? 'fa-angle-up' : 'fa-angle-down' "></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div v-if="i == selected" class = "topic-content ql-snow">
+                            <div v-html="topic.html" class = "content-container ql-editor" >
+
+                            </div>
+                            <div v-for="(video, j) in topic.videos" v-bind:key="j" class = "video">
+                                <video controls>
+                                    <source :src="video.link" type="video/mp4">
+                                </video>
+                            </div>
                         </div>
                     </div>
-                    <div v-if="i == selected" class = "topic-content ql-snow">
-                        <div v-html="topic.html" class = "content-container ql-editor" >
 
-                        </div>
-                        <div v-for="(video, j) in topic.videos" v-bind:key="j" class = "video">
-                            <video controls>
-                                <source :src="video.link" type="video/mp4">
-                            </video>
+                    <div class = "assignment-wrapper" v-if = "topic.type=='assignment'">
+                        <div class = "topic-title">
+                            <div class = "text">{{topic.title}} </div>
+                            <div class = "actions">
+                                <router-link class = "expand" :to="'submitassignment?course=' + course.id + '&assignment=' + topic.id">
+                                    <i class="fa fa-angle-right" ></i>
+                                </router-link>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -63,9 +76,14 @@ export default{
             this.course.topics.map( e => e.videos = media.filter( 
                 item => item.media_type == "mp4" && item.topic_id == e.topic_id
             ) )
+            this.course.topics.sort( (a, b) => {
+                let idA = a.type == "assignment" ? a.id : a.topic_id;
+                let idB = b.type == "assignment" ? b.id : b.topic_id;
+                return idA - idB;
+            })
             console.log(this.course);
             this.loading = false;
-        })
+        });
     }
 
 };
@@ -140,6 +158,12 @@ export default{
                                     font-weight: $bold;
                                 }
                             }
+                        }
+                    }
+
+                    .assignment-wrapper{
+                        .topic-title{
+                            background-color: $grey3;                            
                         }
                     }
 

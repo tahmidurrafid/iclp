@@ -3,17 +3,15 @@
         <div class = "title">Submit Assignment</div>
 
         <div class = "content">
-            <div class = "assignment-title">Assignment 1 : Class, Inheritance and Polymorphism</div>
+            <div class = "assignment-title">Assignment : {{details.title}}</div>
             <div class = "description">
-                Object-Oriented programming (OOP) refers to a type of programming in which programmers define the data type of a data structure and the type of operations that can be applied to the data structure.
-                <br/><br/>
-                As Java being the most sought-after skill, we will talk about object-oriented programming concepts in Java. An object-based application in Java is based on declaring classes, creating objects from them and interacting between these objects. I have discussed Java Classes and Objects which is also a part of object-oriented programming concepts, in my previous blog.
+                {{details.brief}}
             </div>
             <div class = "downloads">
-                <a class = "item" href = "#">
+                <a class = "item" :href = "details.file_link + ''">
                     <div class = "file">
                         <i class = "fa fa-file-archive-o"></i>
-                        <span>Assignment Description FIle.zip</span>
+                        <span>{{details.file_name}}</span>
                     </div>
                     <div class = "file-details">
                         <span class = "size">File Size : 2mb</span>
@@ -35,9 +33,27 @@
 </template>
 
 <script>
-
+import axios from 'axios';
 export default{
     name : 'InstructorDashboard',
+
+    data(){
+        return {
+            details: {},
+        }
+    },
+
+    mounted(){
+        axios.get(`api/assignment/${this.$route.query.course}/${this.$route.query.assignment}`).then(
+            (res) => {
+                if(res.data && res.data.success != 0){
+                    this.details = res.data;
+                    this.details.file_link = axios.defaults.baseURL + this.details.file_link;
+                    console.log(this.details)
+                }
+            }
+        )
+    }
 };
 </script>
 
