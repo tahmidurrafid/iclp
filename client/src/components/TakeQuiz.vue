@@ -2,66 +2,27 @@
     <div class = "quiz">
         <div class = "header">
             <div class = "title">Take Quiz</div>
-            <div class = "topic-title">Advanced Algorithm with c++</div>
-            <div class = "mark-time">
-                <div class = "mark">Mark : 30</div>
-                <div class = "time">Time : 20 mins</div>
+            <span class = "topic-title">{{topicname}}</span>
+            <div class = "mark">Mark : {{mark}}</div>
+            <div class = "time">
+                Time : 
+                <span v-if="totalTime.hours!=0"> {{totalTime.hours}} Hours </span>
+                <span v-if="totalTime.minutes!=0"> {{totalTime.minutes}} Minutes </span>
+                <span v-if="totalTime.seconds!=0"> {{totalTime.seconds}} Seconds </span>
             </div>
         </div>
 
         <div class = "content">
-            <div class = "questions">
+            <div class = "questions" v-for="(item,i) in questions" v-bind:key="i">
                 <div class = "item">
-                    <div class = "question">
-                        <div class = "statement">1: Which of the following is an example of a deterministic algorithm?</div>
-                        <label class = "option">
+                    <div class = "question" >
+                        <div class = "statement">{{item.statement}}</div>
+                        <label class = "option" v-for="(option,j) in questions[i].options" v-bind:key="j">
                             <input type="radio" name = "radio" /> 
                             <span class = "checkmark"><i class= "fa fa-check"></i></span> 
-                            <span class = "text">Option 1</span>
-                        </label>
-                        <label class = "option">
-                            <input type="radio" name = "radio" /> 
-                            <span class = "checkmark"><i class= "fa fa-check"></i></span> 
-                            <span class = "text">Option 1</span>
-                        </label>
-                        <label class = "option">
-                            <input type="radio" name = "radio" /> 
-                            <span class = "checkmark"><i class= "fa fa-check"></i></span> 
-                            <span class = "text">Option 1</span>
-                        </label>
-                        <label class = "option">
-                            <input type="radio" name = "radio" /> 
-                            <span class = "checkmark"><i class= "fa fa-check"></i></span> 
-                            <span class = "text">Option 1</span>
+                            <span class = "text">{{option}}</span>
                         </label>
                     </div>
-                    <div class = "point">4 Points</div>
-                </div>
-                <div class = "item">
-                    <div class = "question">
-                        <div class = "statement">2: Which of the following is an example of a deterministic algorithm?</div>
-                        <label class = "option">
-                            <input type="checkbox" name = "radio" /> 
-                            <span class = "checkmark"><i class= "fa fa-check"></i></span> 
-                            <span class = "text">Option 1</span>
-                        </label>
-                        <label class = "option">
-                            <input type="checkbox" name = "radio" /> 
-                            <span class = "checkmark"><i class= "fa fa-check"></i></span> 
-                            <span class = "text">Option 1</span>
-                        </label>
-                        <label class = "option">
-                            <input type="checkbox" name = "radio" /> 
-                            <span class = "checkmark"><i class= "fa fa-check"></i></span> 
-                            <span class = "text">Option 1</span>
-                        </label>
-                        <label class = "option">
-                            <input type="checkbox" name = "radio" /> 
-                            <span class = "checkmark"><i class= "fa fa-check"></i></span> 
-                            <span class = "text">Option 1</span>
-                        </label>
-                    </div>
-                    <div class = "point">4 Points</div>
                 </div>
             </div>
             <div class = "submit">
@@ -74,12 +35,37 @@
 </template>
 
 <script>
-
+import axios from 'axios';
 export default{
     name : 'TakeQuiz',
     data(){
         return{
+            questions : [],
+            totalTime:{hours:0,minutes:0,seconds:0},
+            topicname:"",
+            mark:0,
         }
+    },
+    mounted(){
+        axios.get('api/quiz/quizdata/'+this.$route.query.id).then( response => {
+            if(response.data!="error")
+            {
+                let quiz=JSON.parse(response.data[0].quiz);
+                this.questions=quiz.questions;
+                this.totalTime=quiz.totalTime;
+                for(let i=0;i<quiz.displayQus;i++)
+                {
+                    let random = Math.floor(Math.random() * quiz.questions.length);
+                    this.questions.push(quiz.questions[random]);
+                    quiz.questions.splice(random,1);
+                }
+                this.mark=quiz.questions.length;
+                axios.get('api/quiz/topicname/'+response.data[0].course_id+'/'+response.data[0].topic_id).then(res=>{
+                    this.topicname=res.data[0].title;
+                });
+            }
+
+        });
     }
 };
 </script>
@@ -89,14 +75,15 @@ export default{
 
     .quiz{
         .header{
-            margin : 50px auto;            
-            width : 300px;
+            margin : 50px auto; 
+            text-align: center;           
             .title{
                 position : relative;
                 font-weight: $semibold;
                 font-size: $font30;
                 line-height: 20px;
                 margin : 20px 0;
+                text-align: center;
                 &::before, &::after{
                     top : 15%;
                     display: block;
@@ -114,20 +101,22 @@ export default{
                 }
             }
             .topic-title{
-                font-size: $font16;
+                display: inline-block;
+                text-align: center;
+                font-size: 20px;
                 font-weight: $medium;
-                width : 100%;
                 background-color: $grey1;
                 color : $white;
                 border-radius: 10px;
-                padding : 5px 0;
+                padding : 2px 20px;
             }
-            .mark-time{
-                display: flex;
-                justify-content: space-between;
-                font-size: $font16;
+            .mark,.time{
+                text-align: center;
+                font-size: 20px;
                 margin : 10px 0;
+                font-weight: $semibold;
             }
+            
         }
 
         .content{

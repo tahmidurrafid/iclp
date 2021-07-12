@@ -18,5 +18,26 @@ module.exports={
                 }
             });
         });
-    }
+    },
+    quizdata:(req, res)=>{
+        quizService.quizData(req.params.id, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
+    topicname:(req, res)=>{
+        quizService.topicName(req.params, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
+
 }
