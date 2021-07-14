@@ -20,8 +20,15 @@
                     </select>
                 </div>
                 <div class = "set-time">
-                    <a class = "has-time selected">Number of Questions to display on a single Quiz</a>
+                    <a class = "has-time selected">Number of questions to display on a single quiz</a>
                     <select v-model="displayQus" style="text-align-last:center;font-weight:600;">
+                            <option disabled value="0">Select</option>
+                            <option v-for="i in 30" v-bind:value="i" v-bind:key="i">{{i}}</option>
+                    </select>
+                </div>
+                <div class = "set-time">
+                    <a class = "has-time selected">Number of correct answer needed to pass</a>
+                    <select v-model="passmark" style="text-align-last:center;font-weight:600;">
                             <option disabled value="0">Select</option>
                             <option v-for="i in 30" v-bind:value="i" v-bind:key="i">{{i}}</option>
                     </select>
@@ -99,6 +106,11 @@
                     * Please select the number of the questions to be display
                 </div>
             </div>
+            <div class="error" v-if="errorType=='passmark'">
+                <div>
+                    * Pass mark can't be greater than total marks.
+                </div>
+            </div>
             <div class="error" v-if="errorType=='timeZero'">
                 <div>
                     * Please give time for the quiz
@@ -135,6 +147,7 @@ export default {
             seconds : 0,
             errorType : "",
             activePart : "setQuiz",
+            passmark : 0,
         }
     },
     methods:{
@@ -155,6 +168,10 @@ export default {
             {
                 this.errorType="displayQusZero"
             }
+            if(this.passmark>this.displayQus)
+            {
+                this.errorType="passmark"
+            }
             if(this.hours==0&&this.minutes==0&&this.seconds==0)
             {
                 this.errorType="timeZero"
@@ -168,7 +185,8 @@ export default {
                         seconds:this.seconds
                     },
                     displayQus:this.displayQus,
-                    questions:this.questions
+                    questions:this.questions,
+                    passmark:this.passmark
                 };
                 let formData = new FormData();
                 formData.append('courseID',this.$route.query.courseID);

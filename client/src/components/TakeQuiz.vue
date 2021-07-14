@@ -3,7 +3,8 @@
         <div class = "header">
             <div class = "title">Take Quiz</div>
             <span class = "topic-title">{{topicname}}</span>
-            <div class = "mark">Mark : {{mark}}</div>
+            <div class = "mark">Total Marks : {{mark}}</div>
+            <div class = "mark">Marks to Pass : {{passmark}}</div>
             <div class = "time">
                 Time : 
                 <span v-if="totalTime.hours!=0"> {{totalTime.hours}} Hours </span>
@@ -16,7 +17,7 @@
             <div class = "questions" v-for="(item,i) in questions" v-bind:key="i">
                 <div class = "item">
                     <div class = "question" >
-                        <div class = "statement">{{item.statement}}</div>
+                        <div class = "statement">{{i+1}}: {{item.statement}}</div>
                         <label class = "option" v-for="(option,j) in questions[i].options" v-bind:key="j">
                             <input type="radio" name = "radio" /> 
                             <span class = "checkmark"><i class= "fa fa-check"></i></span> 
@@ -44,6 +45,7 @@ export default{
             totalTime:{hours:0,minutes:0,seconds:0},
             topicname:"",
             mark:0,
+            passmark:0,
         }
     },
     mounted(){
@@ -51,7 +53,6 @@ export default{
             if(response.data!="error")
             {
                 let quiz=JSON.parse(response.data[0].quiz);
-                this.questions=quiz.questions;
                 this.totalTime=quiz.totalTime;
                 for(let i=0;i<quiz.displayQus;i++)
                 {
@@ -59,7 +60,8 @@ export default{
                     this.questions.push(quiz.questions[random]);
                     quiz.questions.splice(random,1);
                 }
-                this.mark=quiz.questions.length;
+                this.mark=quiz.displayQus;
+                this.passmark=quiz.passmark;
                 axios.get('api/quiz/topicname/'+response.data[0].course_id+'/'+response.data[0].topic_id).then(res=>{
                     this.topicname=res.data[0].title;
                 });
