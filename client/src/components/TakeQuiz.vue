@@ -1,8 +1,9 @@
 <template>
-    <div class = "quiz">
+<div>
+    <div class = "quiz" v-if="activePart=='takeQuiz'">
         <div class = "header">
             <div class = "title">Take Quiz</div>
-            <span class = "topic-title">{{topicname}}</span>
+            <div class = "topic-title">{{topicname}}</div>
             <div class = "mark">Total Marks : {{mark}}</div>
             <div class = "mark">Marks to Pass : {{passmark}}</div>
             <div class = "time">
@@ -19,7 +20,7 @@
                     <div class = "question" >
                         <div class = "statement">{{i+1}}: {{item.statement}}</div>
                         <label class = "option" v-for="(option,j) in questions[i].options" v-bind:key="j">
-                            <input type="radio" name = "radio" /> 
+                            <input type="radio" v-bind:name="'radio'+i" /> 
                             <span class = "checkmark"><i class= "fa fa-check"></i></span> 
                             <span class = "text">{{option}}</span>
                         </label>
@@ -27,12 +28,25 @@
                 </div>
             </div>
             <div class = "submit">
-                <a class = "button solid white">
+                <button class = "button solid white" @click="submitquiz">
                     Submit
-                </a>
+                </button>
             </div>
         </div>
     </div>
+    <div class="success" v-if="activePart==='success'">
+        <div>
+            <span>Congratulations!! You got {{obtainedmark}}/{{mark}} .</span>
+            <span class = "count"><i class="fa fa-check-circle"></i></span>
+        </div>
+    </div>
+    <div class="fail" v-if="activePart==='fail'">
+        <div>
+            <span>You got {{obtainedmark}}/{{mark}} . Try again!!</span>
+            <span class = "count"><i class="fa fa-times-circle"></i></span>
+        </div>
+    </div>
+</div>
 </template>
 
 <script>
@@ -46,6 +60,8 @@ export default{
             topicname:"",
             mark:0,
             passmark:0,
+            obtainedmark:0,
+            activePart : "takeQuiz"
         }
     },
     mounted(){
@@ -65,42 +81,106 @@ export default{
                 axios.get('api/quiz/topicname/'+response.data[0].course_id+'/'+response.data[0].topic_id).then(res=>{
                     this.topicname=res.data[0].title;
                 });
+                setTimeout( this.submitquiz,(this.totalTime.hours*3600+this.totalTime.minutes*60+this.totalTime.seconds)*1000);
             }
 
         });
+    },
+    methods:{
+        submitquiz:function()
+        {
+            this.obtainedmark=0;
+            for(let i=0;i<this.mark;i++)
+            {
+                let options=document.getElementsByName("radio"+i);
+                for(let j=0;j<options.length;j++)
+                {
+                    if(options[j].checked)
+                    {
+                        if(j==this.questions[i].correctdOption)
+                        {
+                            this.obtainedmark++;
+                        }
+                    }
+
+                }
+            }
+            let quizResult={ 
+                userId:7,
+                quizId:5,
+                obtainedMark:this.obtainedmark
+            }
+            axios.put( 'api/quiz/userquiz',quizResult
+                    ).then(response=>{
+                        if(response.data!="error")
+                        {
+                            if(this.obtainedmark>=this.passmark)
+                            {
+                                this.activePart="success"
+                            }
+                            else
+                            {
+                                this.activePart="fail"
+                            }
+                        }
+                    }).catch(err=>{
+                        console.log(err);
+
+                });
+        }
     }
 };
 </script>
 
 <style lang = "scss" scoped>
     @import "../scss/_variables.scss";
-
+    .success{
+        min-height : 30px;
+        background-color: #2dda6f83;
+        color : #255a3d;
+        display: flex;
+        padding :5px 30px;
+        justify-content: space-between;
+        font-size: 25px;
+        font-weight: 600;
+        margin : 30px;
+        align-items: center;
+        text-align: center;
+        border-radius: 5px;
+        .count{
+            margin-left: 30px;
+            width : 20px;
+            height: 20px;
+            border-radius: 100px;
+        }
+    }
+    .fail{
+        min-height : 30px;
+        background-color: #eb6a6a7a;
+        color : #b10600;
+        display: flex;
+        padding :5px 30px;
+        justify-content: space-between;
+        font-size: 25px;
+        font-weight: 600;
+        margin : 30px;
+        align-items: center;
+        text-align: center;
+        border-radius: 5px;
+        .count{
+            margin-left: 30px;
+            width : 20px;
+            height: 20px;
+            border-radius: 100px;
+        }
+    }
     .quiz{
         .header{
             margin : 50px auto; 
             text-align: center;           
             .title{
-                position : relative;
-                font-weight: $semibold;
-                font-size: $font30;
-                line-height: 20px;
-                margin : 20px 0;
-                text-align: center;
-                &::before, &::after{
-                    top : 15%;
-                    display: block;
-                    background: $wing;
-                    content: '';
-                    width : 40px;
-                    height: 70%;
-                    position: absolute;
-                }
-                &:before{
-                    left : 0;
-                }
-                &:after{
-                    right : 0;
-                }
+                 @include title;
+                 margin-bottom: 10px;
             }
             .topic-title{
                 display: inline-block;
@@ -189,9 +269,8 @@ export default{
                 }
             }
             .submit{
-                display: flex;
-                justify-content: flex-end;
-                padding : 10px 60px 50px 60px;
+                text-align: center;
+                padding : 50px 60px 50px 60px;
             }
         }
     }

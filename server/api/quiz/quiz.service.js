@@ -37,4 +37,25 @@ module.exports = {
         );
 
     },
-}
+    userQuiz : (data, callback) => {
+        db.query(`insert ignore into userQuiz (user_id,quiz_id,obtained_mark) values(${data.userId},${data.quizId},${data.obtainedMark})`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    db.query(`update userQuiz set obtained_mark=${data.obtainedMark} where user_id=${data.userId} and quiz_id=${data.quizId} and obtained_mark<${data.obtainedMark}`,
+                        (error, results, fields) => {
+                            if(error){
+                                return callback(error);
+                            }
+                            else{
+                                return callback(null, results);
+                            }
+                        }
+                    );
+                   
+                }
+            }
+        );
+    },
+} 

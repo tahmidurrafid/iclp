@@ -39,5 +39,26 @@ module.exports={
 
         })
     },
+    topicname:(req, res)=>{
+        quizService.topicName(req.params, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
+    userquiz:(req, res)=>{
+        quizService.userQuiz(req.body, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
+
 
 }
