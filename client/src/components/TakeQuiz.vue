@@ -7,10 +7,13 @@
             <div class = "mark">Total Marks : {{mark}}</div>
             <div class = "mark">Marks to Pass : {{passmark}}</div>
             <div class = "time">
-                Time : 
-                <span v-if="totalTime.hours!=0"> {{totalTime.hours}} Hours </span>
-                <span v-if="totalTime.minutes!=0"> {{totalTime.minutes}} Minutes </span>
-                <span v-if="totalTime.seconds!=0"> {{totalTime.seconds}} Seconds </span>
+                Time  
+                <div class="clock">
+                    <span> {{totalTime.hours}} : </span>
+                    <span> {{totalTime.minutes}} : </span>
+                    <span> {{totalTime.seconds}} </span>
+                </div>
+                
             </div>
         </div>
 
@@ -61,7 +64,8 @@ export default{
             mark:0,
             passmark:0,
             obtainedmark:0,
-            activePart : "takeQuiz"
+            activePart : "takeQuiz",
+            submitted:false,
         }
     },
     mounted(){
@@ -81,12 +85,39 @@ export default{
                 axios.get('api/quiz/topicname/'+response.data[0].course_id+'/'+response.data[0].topic_id).then(res=>{
                     this.topicname=res.data[0].title;
                 });
-                setTimeout( this.submitquiz,(this.totalTime.hours*3600+this.totalTime.minutes*60+this.totalTime.seconds)*1000);
+                setInterval(this.handleTime,1000);
             }
 
         });
     },
     methods:{
+        handleTime:function()
+        {
+            if(this.totalTime.seconds>0)
+            {
+                this.totalTime.seconds--;
+                return;
+            }
+            if(this.totalTime.minutes>0)
+            {
+                this.totalTime.minutes--;
+                this.totalTime.seconds=59;
+                return;
+            }
+            if(this.totalTime.hours>0)
+            {
+                this.totalTime.hours--;
+                this.totalTime.minutes=59;
+                this.totalTime.seconds=59;
+                return;
+            }
+            if(!this.submitted)
+            {
+                this.submitted=true;
+                this.submitquiz();
+            }
+            
+        },
         submitquiz:function()
         {
             this.obtainedmark=0;
@@ -107,7 +138,7 @@ export default{
             }
             let quizResult={ 
                 userId:7,
-                quizId:5,
+                quizId:this.$route.query.id,
                 obtainedMark:this.obtainedmark
             }
             axios.put( 'api/quiz/userquiz',quizResult
@@ -197,6 +228,15 @@ export default{
                 font-size: 20px;
                 margin : 10px 0;
                 font-weight: $semibold;
+                .clock{
+                    display: inline-block;
+                    background-color: #dbdbdb;
+                    border: 2px solid #6b6b6b;
+                    border-radius: 3px;
+                    padding:1px 5px;
+                    margin-left: 5px;
+                    color: #252525;
+                }
             }
             
         }
