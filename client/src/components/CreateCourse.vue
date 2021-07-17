@@ -7,10 +7,27 @@
         <div v-else class = "wrap">
             <div class = "about">
                 <input type="text" class="coursetitle" v-model="course.title" placeholder="Course Title Goes Here" /> 
-                <select class="category" v-model="course.category" @change="categoryChange()">
-                    <option disabled value="0">Select a Category</option>
-                    <option v-for="item in categories" v-bind:key="item.id" :value="item.id"> {{item.value}} </option>
-                </select>
+                <div class = "categories">
+                    <div v-for="(item, i) in course.categories" v-bind:key="i" class = "category">
+                        <div class = "category-name">{{ categories.filter(e => e.id == item.id)[0].value }}</div>
+                        <div class = "category-level">{{item.level}}</div>
+                        <div class = "delete" @click="deleteCategory(i)">
+                            <i class = "fa fa-close"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class = "add-category">
+                    <select class="category" v-model="course.category" @change="categoryChange()">
+                        <option disabled value="0">Select a Category</option>
+                        <option v-for="item in categories" v-bind:key="item.id" :value="item.id"> {{item.value}} </option>
+                    </select>
+                    <select class = "level" v-model="course.level">
+                        <option v-for="i in 5" v-bind:key="i">{{i}}</option>
+                    </select>
+                    <div class = "button solid white small" @click="addCategory()">
+                        Add
+                    </div>
+                </div>
                 <div class="descriptionlevel">Description</div>
                 <textarea class="description" v-model="course.brief" placeholder="Put your course description here ..." ></textarea>
                 <div class = "flex-elem">
@@ -119,6 +136,8 @@ export default{
                 title : "",
                 brief : "",
                 category : "0",
+                level : 1,
+                categories : [],
                 topics : [
                 ]
             },
@@ -190,6 +209,22 @@ export default{
 
         categoryChange : function(){
             console.log(this.course.category)
+        },
+
+        deleteCategory : function(index){
+            console.log(index)
+            // console.log( JSON.stringify(this.course.categories));
+            this.course.categories.splice(index, 1);
+        },
+
+        addCategory : function(){
+            this.course.categories.push(
+                {
+                    id :  this.course.category,
+                    level : this.course.level
+                }
+            );
+            console.log(this.course.categories)
         },
 
         fileChanged : function(event, index){
@@ -472,23 +507,79 @@ export default{
                     border-color: $orange;
                 }                
             }
-            .category{
-                color: $black;
-                border: solid 1px $grey3;
-                background-color : $greyLight;
-                padding : 10px 15px;
-                border-radius: 10px;
-                font-size: $font15;   
-                line-height: 50px;
-                margin-top : 30px;
-                outline: none;
-                transition: border .3s;
-                &:focus{
-                    border: solid 1px $black;
+            .categories{
+                .category{
+                    margin-top: 30px;
+                    display: flex;
+                    align-items: center;
+                    .category-name, .category-level{
+                        color: $black;
+                        border: solid 1px $grey3;
+                        background-color : $greyLight;
+                        padding : 10px 15px;
+                        border-radius: 10px;
+                        font-size: $font15;   
+                        // line-height: 30px;
+                        outline: none;
+                        transition: border .3s;                        
+                        text-align: center;
+                    }
+                    .category-name{
+                        min-width: 200px;
+                    }
+                    .category-level{
+                        margin-left: 30px;
+                    }
+                    .delete{
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        $dim : 30px;
+                        height: $dim;
+                        width: $dim;
+                        border-radius: 100%;
+                        background-color: $orange;
+                        border : solid 2px $orange;
+                        color : $white;
+                        margin-left: 40px;
+                        transition: background-color .3s, color .3s;
+                        cursor: pointer;
+                        &:hover{
+                            background-color: $white;
+                            color : $orange
+                        }
+                    }
                 }
-                option{ 
-                    padding : 10px;
+            }
+            .add-category{
+                margin-top : 30px;                
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                &>*{
+                    margin-right: 30px;
                 }
+                select{
+                    color: $black;
+                    border: solid 1px $grey3;
+                    background-color : $greyLight;
+                    padding : 10px 15px;
+                    border-radius: 10px;
+                    font-size: $font15;   
+                    line-height: 50px;
+                    outline: none;
+                    transition: border .3s;
+                    &:focus{
+                        border: solid 1px $black;
+                    }
+                    option{ 
+                        padding : 10px;
+                    }
+                }
+                .category{
+
+                }
+
             }
             .descriptionlevel{
                 margin-top: 30px;

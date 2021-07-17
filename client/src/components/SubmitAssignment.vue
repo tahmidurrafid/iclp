@@ -21,9 +21,20 @@
                     </div>
                 </a>
             </div>
+            <div class = "submitted">
+                <div class = "item" v-for="(item, i) in details.submissions" v-bind:key="i">
+                    <div class = "left">
+                        <a class = "link" :href="item.file_link">Click To Download</a>
+                        <div class = "date">Date: {{item.submission_time}}</div> 
+                    </div>
+                    <div class = "right">
+                        Mark : <span>{{item.mark}} / {{details.total_mark}}</span>
+                    </div>
+                </div>
+            </div>
             <div class = "upload">
-                <input type = "file" name = "upload"/>
-                <a class = "upload-button">
+                <input type = "file" name = "upload" @change="fileChanged($event)"/>
+                <a class = "upload-button" @click="submit()">
                     <i class = "fa fa-link"></i>
                     <span>Upload File (.zip)</span>
                 </a>
@@ -39,20 +50,63 @@ export default{
 
     data(){
         return {
-            details: {},
+            details: {
+                file : [],
+                course_id : 0,
+                id : 0
+            },
         }
     },
 
     mounted(){
+        if(!this.$route.query.course || !this.$route.query.assignment){
+            return;
+        }
+        this.details.course_id = this.$route.query.course;
+        this.details.assignment_id = this.$route.query.assignment;
         axios.get(`api/assignment/${this.$route.query.course}/${this.$route.query.assignment}`).then(
             (res) => {
                 if(res.data && res.data.success != 0){
                     this.details = res.data;
                     this.details.file_link = axios.defaults.baseURL + this.details.file_link;
-                    console.log(this.details)
+                    for(let i in this.details.submissions){
+                        let x = this.details.submissions[i];
+                        x.file_link = axios.defaults.baseURL + x.file_link;
+                    }
                 }
             }
         )
+    },
+
+    methods : {
+        fileChanged : function(event){
+            if(event.target.files.length == 0){
+                return;
+            }
+            this.details.file = event.target.files[0];
+        },
+        submit : function(){
+            if(this.details.file.length == 0)
+                return;
+            let formData = new FormData();
+
+            formData.append("file" , this.details.file);
+
+            let data = {
+                course_id : this.details.course_id,
+                assignment_id : this.details.id,
+            }
+
+            formData.append("data", JSON.stringify(data));
+            axios.post(`api/assignment/${data.course_id}/${data.assignment_id}`, 
+                formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then( res => {
+                console.log(res);
+            })
+        }
     }
 };
 </script>
@@ -95,6 +149,7 @@ export default{
             .downloads{
                 a.item{
                     margin : 40px 0;
+                    margin-bottom: 20px;
                     color : $black;
                     display: block;
                     border-top : solid 1px $greyLight;
@@ -138,6 +193,30 @@ export default{
                 }
             }
 
+            .submitted{
+                .item{
+                    border-bottom : solid 1px $greyLight;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding : 20px 0;
+                    .left{
+                        .link{
+                            color: $grey1;
+                            font-size: $font20;
+                        }
+                        .date{
+                            color: $grey3;
+                        }
+                    }
+                    .right{
+                        span{
+
+                        }
+                    }
+                }
+            }
+
             .upload{
                 margin : 15px 0;
                 display: flex;
@@ -150,6 +229,7 @@ export default{
                     padding : 7px 20px;
                     border-radius: 10px;
                     font-size: $font18;
+                    cursor: pointer;
                     i{
                         padding-right: 10px;                        
                     }

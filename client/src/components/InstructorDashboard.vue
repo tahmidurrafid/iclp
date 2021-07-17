@@ -49,16 +49,29 @@
                     <hr class="horizontalLine">
                     <div class="course-list">
                         <div v-for = "(item, i) in assignments" v-bind:key="i" class="list-item">
-                            <span class="courseID">Course ID : {{item.courseID}}</span>
+                            <span class="courseID">Course: {{item.course_title}} (ID: {{item.course_id}})</span>
                             <span class="assignmentTitle">
-                                <span class="course-title">{{item.assignmentName}}</span>
-                                <span class="file-size">File Size : {{item.fileSize}}</span>
-                                <button class="download"><i class="fa fa-download"></i></button>
+                                <div class = "left">
+                                    <a :href="item.file_link" 
+                                    class="course-title">Assignment: {{item.assignment_title}} </a>
+                                    <span class="assignmnet-title"> </span>
+                                </div>
+                                <div class = "right">
+                                    <a :href="item.submission_link" class="download"><i class="fa fa-download"></i></a>
+                                </div>
                             </span>
                             <span class="submittedby">
-                                <span><i>Submitted By : {{item.submittedBy}}</i></span>
-                                <span><i>Enrollment No : {{item.enrollmentNo}}</i></span>
+                                <span><i>Submitted By : (User_id) {{item.user_id}} </i></span>
                             </span>
+                            <div class = "assignment-grade">
+                                <div class = "mark">
+                                    <input type ="text" v-model="item.mark" /> 
+                                    <span class = "total">/ {{item.total_mark}} </span>
+                                </div>
+                                <div class = "grade_action">
+                                    <div class = "button solid small white" @click="updateMark(item)">Grade</div>
+                                </div>
+                            </div>
                             <hr class="horizontalLine">
                         </div>
                     </div>
@@ -100,11 +113,6 @@ export default{
         return{
             activePart: 'YourCourses',
             assignments : [
-                {courseID : 'CSE11100',assignmentName:'Assignment 1 : Class, Inheritance',submittedBy:'Rabeeb Ibrat',fileSize : '2 mB',enrollmentNo:'1100'},
-                {courseID : 'CSE11100',assignmentName:'Assignment 1 : Class, Inheritance',submittedBy:'Rabeeb Ibrat',fileSize : '2 mB',enrollmentNo:'1100'},
-                {courseID : 'CSE11100',assignmentName:'Assignment 1 : Class, Inheritance',submittedBy:'Rabeeb Ibrat',fileSize : '2 mB',enrollmentNo:'1100'},
-                {courseID : 'CSE11100',assignmentName:'Assignment 1 : Class, Inheritance',submittedBy:'Rabeeb Ibrat',fileSize : '2 mB',enrollmentNo:'1100'}
-
             ] ,
             courses : [
             ]  ,
@@ -121,7 +129,26 @@ export default{
         axios.get('api/courses/for/instructor').then(res => {
             this.courses = res.data;
             this.courseLoading = false;
-        })
+        });
+        axios.get('api/assignment/all').then(res => {
+            for(let i = 0; i < res.data.length; i++){
+                res.data[i].submission_link = axios.defaults.baseURL + res.data[i].submission_link;
+                res.data[i].file_link = axios.defaults.baseURL + res.data[i].file_link;
+                if(res.data[i].mark == -1)
+                    res.data[i].mark = null;
+            }
+            this.assignments = res.data;
+            console.log(this.assignments)
+        });
+    },
+    methods : {
+        updateMark : function(item){
+            axios.put(`api/assignment/mark/${item.submission_id}`, item).then(
+                res => {
+                    console.log(res);
+                }
+            )
+        }
     }
 };
 </script>
@@ -321,6 +348,35 @@ export default{
                     }
                     .course-list{
                         .list-item{
+
+                            .assignment-grade{
+                                padding-top: 10px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+                                .mark{
+                                    display: flex;
+                                    align-items: center;
+                                    input{
+                                        border: solid 1px $grey2;
+                                        width: 80px;
+                                        text-align: center;
+                                        border-radius: 5px;
+                                        padding : 10px;
+                                        display: block;
+                                        box-sizing: border-box;
+                                    }
+                                    .total{
+                                        display: block;
+                                        padding-left: 10px;
+                                    }
+                                }
+                                .grade_action{
+
+                                }
+                                /* .grade */
+                            }
+
                             margin : 20px 0px;
                             .courseID{
                                 display: block;
@@ -337,6 +393,10 @@ export default{
                                     color: #707070;
                                     font-weight: 600;
                                     width: 70%;
+                                    transition: color .2s;
+                                    &:hover{
+                                        color: $orange;
+                                    }                                    
                                 }
                                 .file-size{
                                     font-size: 10px;
@@ -353,6 +413,8 @@ export default{
                                     border-radius: 50px;
                                     background-color: #FBFBFB;
                                     border: 1px solid #D5D5D5;
+                                    display: flex;
+                                    color: $black;
                                 }    
                             }
                             .submittedby{
