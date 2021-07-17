@@ -59,6 +59,16 @@ module.exports={
 
         })
     },
+    allcourses:(req, res)=>{
+        quizService.allCourses((err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
 
 
 }
