@@ -49,6 +49,38 @@
             <span class = "count"><i class="fa fa-times-circle"></i></span>
         </div>
     </div>
+    <div class="suggestions" v-if="showSuggestions">
+        <div class="suggestionTitle">
+            Suggested Courses for you
+        </div>
+        <div class="courseSuggestions" v-for="(item,i) in courseSuggestions" v-bind:key="i">
+            <router-link class="courseItem"  :to = "{path : '/course/details?id=' + item.id}">{{item.title}}</router-link>
+        </div>
+    </div>
+    <div class="gameSuggestions" v-if="showSuggestions">
+        <div class="suggestionTitle">
+            Suggested Games for you
+        </div>
+        <div class = "content">
+            <div class = "items">
+                <div v-for="item in gameSuggestions" v-bind:key="item.id"  class = "item">
+                    <div class = "wrap">
+                        <div class = "description">
+                            <a class = "tag" :href="'http://localhost:3000/'+item.filePath">Play</a>
+                            <div class = "title">{{item.gameName}}</div>
+                            <div class = "about">
+                                {{item.details}}
+                            </div>
+                        </div>
+                        <div class = "image">
+                            <div class = "overlay" />
+                            <img :src = "'http://localhost:3000/'+item.coverPic"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -66,6 +98,9 @@ export default{
             obtainedmark:0,
             activePart : "takeQuiz",
             submitted:false,
+            courseSuggestions:[],
+            gameSuggestions:[],
+            showSuggestions:false,
         }
     },
     mounted(){
@@ -82,6 +117,8 @@ export default{
                 }
                 this.mark=quiz.displayQus;
                 this.passmark=quiz.passmark;
+                this.gameSuggestions=quiz.gameSuggestions;
+                this.courseSuggestions=quiz.courseSuggestions;
                 axios.get('api/quiz/topicname/'+response.data[0].course_id+'/'+response.data[0].topic_id).then(res=>{
                     this.topicname=res.data[0].title;
                 });
@@ -113,13 +150,13 @@ export default{
             }
             if(!this.submitted)
             {
-                this.submitted=true;
                 this.submitquiz();
             }
             
         },
         submitquiz:function()
         {
+            this.submitted=true;
             this.obtainedmark=0;
             for(let i=0;i<this.mark;i++)
             {
@@ -153,6 +190,10 @@ export default{
                             {
                                 this.activePart="fail"
                             }
+                            if(this.obtainedmark<this.mark)
+                            {
+                                this.showSuggestions=true;
+                            }
                         }
                     }).catch(err=>{
                         console.log(err);
@@ -174,7 +215,7 @@ export default{
         justify-content: space-between;
         font-size: 25px;
         font-weight: 600;
-        margin : 30px;
+        margin : 50px;
         align-items: center;
         text-align: center;
         border-radius: 5px;
@@ -194,7 +235,7 @@ export default{
         justify-content: space-between;
         font-size: 25px;
         font-weight: 600;
-        margin : 30px;
+        margin : 50px;
         align-items: center;
         text-align: center;
         border-radius: 5px;
@@ -203,6 +244,123 @@ export default{
             width : 20px;
             height: 20px;
             border-radius: 100px;
+        }
+    }
+    .suggestions{
+        margin : 50px;
+        padding: 20px;
+        text-align: center;
+        border-radius: 100px;
+        border: 2px solid rgb(155, 155, 155);
+        .suggestionTitle{
+            font-size: 30px;
+            color: rgb(56, 56, 56);
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+        .courseSuggestions{
+            margin: 20px 0px;
+            .courseItem{
+                background: $orange;
+                font-size: 20px;
+                border-radius: 10px;
+                padding: 5px 10px;
+                font-weight: 600;
+                color: white;
+                &:hover{
+                    background-color: white;
+                    color: $orange;
+                    border: 2px solid $orange;
+                }
+            }
+        }
+    }
+    .gameSuggestions{
+        margin : 50px;
+        padding: 20px;
+        text-align: center;
+        .suggestionTitle{
+            font-size: 30px;
+            color: rgb(56, 56, 56);
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+        .content{
+            margin: 0px auto;
+            width : 85%;
+            display: flex;
+            justify-content: space-between;
+            .items{
+                width: 100%;
+                display: inline-block;
+                .item{
+                    width: 33%;
+                    box-sizing: border-box;
+                    padding : 15px;
+                    height: max-content;
+                    margin: 0px auto;                    
+                    .wrap{
+                        position : relative;
+                        .description{
+                            z-index: 100;
+                            text-align: left;
+                            color : $white;
+                            position : absolute;
+                            left : 0;
+                            bottom: 0;
+                            box-sizing: border-box;
+                            padding : 20px;
+                            &>*{
+                                margin-top: 15px;
+                            }
+                            .tag{
+                                display:inline-block;
+                                margin-bottom: 100px;
+                                background-color: $orange;
+                                padding : 5px 10px;
+                            }
+                            .title{
+                                font-size: $font20;
+                                font-weight: $medium;
+                            }
+                            .about{
+                                font-size: $font13;
+                            }
+                            .react{
+                                display: flex;
+                                justify-content: space-between;
+                                &>div{
+                                    vertical-align: middle;
+                                    span{
+                                        font-size: $font15;
+                                        font-weight: $semibold;
+                                    }
+                                    i{
+                                        color: $orange;
+                                        font-size: $font20;
+                                    }
+                                }
+                            }
+                        }
+                        .image{
+                            .overlay{
+                                position : absolute;
+                                height : 100%;
+                                width : 100%;
+                                background-color: rgba(0,0,0, .8);
+                                left : 0;
+                                top : 0;
+                            }
+                            img{
+                                display: block;
+                                width : 100%;
+                                height: 100%;
+                            }
+                        }
+                    }
+                }
+            }
+
         }
     }
     .quiz{
