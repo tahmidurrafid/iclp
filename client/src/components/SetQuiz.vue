@@ -87,6 +87,42 @@
                         Add Question
                     </span>
                 </div> 
+                <div class="suggestion">
+                    <div class="suggestiontitle">
+                        Course Suggestions :
+                    </div>
+                    <div class="suggestions" v-for="(item,i) in suggestedCourses" v-bind:key="i">
+                        {{item.title}}
+                    </div>
+                </div>
+                <div class = "set-time">
+                    <a class = "has-time selected">Select Course Suggestions</a>
+                    <select v-model="selectedCourse" style="text-align-last:center;font-weight:600;">
+                            <option disabled value="-1">Select</option>
+                            <option v-for="(item,i) in courses" v-bind:value="i" v-bind:key="i">{{item.title}}</option>
+                    </select>
+                    <div class="catagoryAdd">
+                        <button class="button white solid small large" @click="addCourseSuggestion">Add</button>
+                    </div>
+                </div>
+                <div class="suggestion">
+                    <div class="suggestiontitle">
+                        Game Suggestions :
+                    </div>
+                    <div class="suggestions" v-for="(item,i) in suggestedGames" v-bind:key="i">
+                        {{item.gameName}}
+                    </div>
+                </div>
+                <div class = "set-time">
+                    <a class = "has-time selected">Select Game Suggestions</a>
+                    <select v-model="selectedGame" style="text-align-last:center;font-weight:600;">
+                            <option disabled value="-1">Select</option>
+                            <option v-for="(item,i) in games" v-bind:value="i" v-bind:key="i">{{item.gameName}}</option>
+                    </select>
+                    <div class="catagoryAdd">
+                        <button class="button white solid small large" @click="addGameSuggestion">Add</button>
+                    </div>
+                </div>
                 <div class="setQuiz">
                     <button class="button white solid large" @click="submitQuiz">Set Quiz</button>
                 </div>
@@ -148,9 +184,45 @@ export default {
             errorType : "",
             activePart : "setQuiz",
             passmark : 0,
+            courses : [],
+            suggestedCourses : [],
+            games : [],
+            suggestedGames : [],
+            selectedCourse:-1,
+            selectedGame:-1,
         }
     },
+    mounted(){
+        axios.get('api/quiz/allcourses').then( response => {
+            this.courses = response.data;
+        });
+        axios.get('api/game/allgames').then( response => {
+            this.games = response.data;
+        });
+
+    },
     methods:{
+        addGameSuggestion:function(){
+            if(this.selectedGame>=0)
+            {
+                this.suggestedGames.push(this.games[this.selectedGame]);
+                this.games.splice(this.selectedGame,1);
+                this.selectedGame=-1;
+            }
+           console.log(this.suggestedGames);
+
+        },
+        addCourseSuggestion:function(){
+            if(this.selectedCourse>=0)
+            {
+                this.suggestedCourses.push(this.courses[this.selectedCourse]);
+                this.courses.splice(this.selectedCourse,1);
+                this.selectedCourse=-1;
+            }
+           console.log(this.suggestedCourses);
+
+        },
+
         submitQuiz:function(){
             this.errorType="";
             for(let i=0;i<this.questions.length;i++)
@@ -186,7 +258,10 @@ export default {
                     },
                     displayQus:this.displayQus,
                     questions:this.questions,
-                    passmark:this.passmark
+                    passmark:this.passmark,
+                    gameSuggestions:this.suggestedGames,
+                    courseSuggestions:this.suggestedCourses
+
                 };
                 let formData = new FormData();
                 formData.append('courseID',this.$route.query.courseID);
@@ -318,6 +393,7 @@ export default {
             .set-time{
                 margin : $margin;
                 display: flex;
+                align-items: center;
                 .has-time.selected{
                     background-color: $orange;
                     color : $white;
@@ -330,7 +406,35 @@ export default {
                     padding : 0 15px;
                     margin-right : 20px; 
                     border-radius: 10px;
-                    font-size: $font15;   
+                    font-size: $font15;  
+                    height: 40px; 
+                }
+                .catagoryAdd{
+                    width: 10%;
+                    .button{
+                        width: 100%;
+                        font-size: 16px;
+                    }
+                }
+            }
+            .suggestion{
+                align-items: center;
+                margin-top: 50px;
+                .suggestiontitle{
+                    display: inline-block;
+                    font-size: 18px;
+                    font-weight: 600;
+                    margin:5px;
+                }
+                .suggestions{
+                    display: inline-block;
+                    font-size: 16px;
+                    background-color: #dadada;
+                    border: 2px solid #4e4e4e;
+                    color: #4e4e4e;
+                    border-radius: 5px;
+                    margin:2px;
+                    padding: 2px 5px;
                 }
             }
             .questions{

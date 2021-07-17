@@ -58,4 +58,16 @@ module.exports = {
             }
         );
     },
+    allCourses: (callback)=>{
+        db.query(`select id,title from course`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
+        );
+
+    },
 } 
