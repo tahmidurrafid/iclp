@@ -86,6 +86,26 @@ module.exports={
             });
         });
     },
+    categoryquizdata:(req, res)=>{
+        quizService.categoryquizData(req.params.id, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
+    skilltest:(req, res)=>{
+        quizService.skillTest(req.body, (err, results) => {
+            if (err) {
+                res.send("error");
+            } else {
+                res.json(results);
+            }
+
+        })
+    },
 
 
 }

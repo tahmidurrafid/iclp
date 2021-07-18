@@ -77,7 +77,39 @@ module.exports = {
             }
             callback(null,results);
 
-        }
-    );
-},
+        });
+    },
+    categoryquizData: (data, callback)=>{
+        db.query(`select * from category WHERE id=${data}`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
+        );
+
+    },
+    skillTest : (data, callback) => {
+        db.query(`insert ignore into categorySkill (user_id,category_id,skill) values(${data.userId},${data.categoryId},'${data.skill}')`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    db.query(`update categorySkill set skill='${data.skill}' where user_id=${data.userId} and category_id=${data.categoryId}`,
+                        (error, results, fields) => {
+                            if(error){
+                                return callback(error);
+                            }
+                            else{
+                                return callback(null, results);
+                            }
+                        }
+                    );
+                   
+                }
+            }
+        );
+    },
 } 

@@ -14,6 +14,7 @@ import Login from './components/Login.vue'
 import Registration from './components/Registration.vue'
 import UserProfile from './components/UserProfile.vue'
 import SetSkillTest from './components/SetSkillTest.vue'
+import TestSkill from './components/TestSkill.vue'
 
 export default [
    { path : '/course', component: CourseView},
@@ -32,4 +33,5 @@ export default [
    { path : '/registration', component : Registration},
    { path : '/user/profile', component : UserProfile},
    { path : '/setSkillTest', component : SetSkillTest},
+   { path : '/testSkill', component : TestSkill},
 ];
