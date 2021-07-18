@@ -48,12 +48,18 @@
                                     {{item.value}}
                                 </div>
                                 <div class = "right">
-                                    <span class = "edit" @click="renameCategory[i].visibility=!renameCategory[i].visibility">
+                                    <span class = "edit" @click="renameCategory[i].visibility=!renameCategory[i].visibility" title="Rename">
                                         <i class = "fa fa-edit"></i>
                                     </span>
-                                    <span class = "edit" @click="deleteCategory(item.id)">
+                                    <span class = "edit" @click="deleteCategory(item.id)" title="Delete">
                                         <i class = "fa fa-trash-o"></i>
                                     </span>
+                                    <span class="edit">
+                                        <router-link :to = "{path : '/setSkillTest?id=' + item.id}" title="Add Quiz" style="color:rgb(0,0,0);">
+                                            <i class = "fa fa-question-circle-o"></i>
+                                        </router-link>
+                                    </span>
+                                    
                                 </div>
                             </div>
                         </div>

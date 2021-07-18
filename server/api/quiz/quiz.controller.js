@@ -69,6 +69,23 @@ module.exports={
 
         })
     },
+    setCategoryQuiz:(req, res)=>{
+        const form = new formidable.IncomingForm();
+        form.parse(req, function(err, fields, files) {
+            if (err) {
+                return res.send("error");
+            }
+            let data=fields;
+            quizService.setCategoryQuiz(data, (err, results) => {
+                if (err) {
+                    return res.send("error");
+                } else {
+                    
+                    return res.json(results);
+                }
+            });
+        });
+    },
 
 
 }
