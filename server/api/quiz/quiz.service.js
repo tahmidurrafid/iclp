@@ -2,8 +2,7 @@ const db = require('../../db/index');
 const fs = require('fs');
 module.exports = {
     setQuiz : (data, callback) => {
-                db.query(`insert into quiz(course_id,topic_id,quiz) values('${data.courseID}','${data.topicID}','${data.quiz}')`,
-                [JSON.stringify(data.quiz)],
+                db.query(`insert into quiz(course_id,topic_id,quiz) values('${data.courseID}','${data.topicID}','${data.quiz}')`,     
                 (error, results, fields) => {
                     if(error){
                         return callback(error);
@@ -69,5 +68,48 @@ module.exports = {
             }
         );
 
+    },
+    setCategoryQuiz : (data, callback) => {
+        db.query(`update category set quiz='${data.quiz}' where id=${data.categoryID}`,
+        (error, results, fields) => {
+            if(error){
+                return callback(error);
+            }
+            callback(null,results);
+
+        });
+    },
+    categoryquizData: (data, callback)=>{
+        db.query(`select * from category WHERE id=${data}`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    return callback(null, results);
+                }
+            }
+        );
+
+    },
+    skillTest : (data, callback) => {
+        db.query(`insert ignore into categorySkill (user_id,category_id,skill) values(${data.userId},${data.categoryId},'${data.skill}')`,
+            (error, results, fields) => {
+                if(error){
+                    return callback(error);
+                }else{
+                    db.query(`update categorySkill set skill='${data.skill}' where user_id=${data.userId} and category_id=${data.categoryId}`,
+                        (error, results, fields) => {
+                            if(error){
+                                return callback(error);
+                            }
+                            else{
+                                return callback(null, results);
+                            }
+                        }
+                    );
+                   
+                }
+            }
+        );
     },
 } 
