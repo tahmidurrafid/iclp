@@ -114,6 +114,23 @@ module.exports = {
     },
 
     create : (data, callback) => {
+
+        console.log(data.body);
+
+        query(`DELETE FROM courseCategory WHERE course_id = ${data.body.id}`);
+
+        let categoryQueryString = `INSERT INTO courseCategory(course_id, category_id, level) VALUES`;
+        for(let i = 0; i < data.body.categories.length; i++){
+            let cat = data.body.categories[i];
+            categoryQueryString += `(${data.body.id}, ${cat.id}, ${cat.level})`;
+            if(i < data.body.categories.length-1)
+                categoryQueryString += ', ';
+        }
+        if(data.body.categories.length){
+            console.log(categoryQueryString);
+            query(categoryQueryString);
+        }
+
         let queryString = `INSERT INTO course(title, brief, instructor_id, category) 
         VALUES(?, ?, ?, ?)`;
         console.log(data.body);
@@ -197,7 +214,15 @@ module.exports = {
         })
         course.topics = course.topics.concat(assignment);
         let media = await query(`SELECT * FROM courseMedia WHERE course_id = ${data.course_id}`);
+        let categories = await query(`SELECT * FROM courseCategory WHERE course_id = ${data.course_id}`);
+        categories = categories.map((e) => {
+            return {
+                id : e.category_id,
+                level : e.level
+            };
+        })
         course.media = media;
+        course.categories = categories;
         return course;
 
     },

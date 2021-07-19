@@ -71,6 +71,12 @@
                                 v-model="topic.html"
                                 @ready="onEditorReady(i)"
                             />
+                            <div class = "quiz-button">
+                                <router-link :to="'/setquiz?courseID=' + course.id + '&topicID=' + topic.id" 
+                                class = "button solid white small" target="_blank">
+                                    Set Quiz
+                                </router-link>
+                            </div>
                         </div>
                     </div>
                     <div class = "assignment" v-if="topic.type == 'assignment'">
@@ -167,6 +173,7 @@ export default{
             this.course.title = data.title;
             this.course.brief = data.brief;
             this.course.category = data.category;
+            this.course.categories = data.categories;
             for(let i in data.topics){
                 let content = data.topics[i].content;
                 if(data.topics[i].type == "topic"){
@@ -218,11 +225,15 @@ export default{
         },
 
         addCategory : function(){
+            let category = {
+                id :  this.course.category,
+                level : this.course.level
+            };
+            if(this.course.categories.filter( e => e.id == category.id).length){
+                return;
+            }
             this.course.categories.push(
-                {
-                    id :  this.course.category,
-                    level : this.course.level
-                }
+                category
             );
             console.log(this.course.categories)
         },
@@ -576,9 +587,9 @@ export default{
                         padding : 10px;
                     }
                 }
-                .category{
+                // .category{
 
-                }
+                // }
 
             }
             .descriptionlevel{
@@ -717,6 +728,11 @@ export default{
                     cursor: pointer;
                     margin-top: 10px;
                     margin-bottom : 30px;
+                }
+                .quiz-button{
+                    display: flex;
+                    justify-content: flex-end;
+                    margin : 40px 0;
                 }
                 .editor{
                     margin-top: 30px;
