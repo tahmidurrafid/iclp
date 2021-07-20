@@ -74,7 +74,7 @@
                             <div class = "quiz-button">
                                 <router-link :to="'/setquiz?courseID=' + course.id + '&topicID=' + topic.id" 
                                 class = "button solid white small" target="_blank">
-                                    Set Quiz
+                                    {{topic.quiz.length? 'Update' : 'Set'}} Quiz
                                 </router-link>
                             </div>
                         </div>
@@ -145,6 +145,9 @@ export default{
                 level : 1,
                 categories : [],
                 topics : [
+                    {
+                        quiz : []
+                    }
                 ]
             },
             selected : -1,
@@ -167,6 +170,7 @@ export default{
         }
 
         this.course.id = this.$route.query.id;
+        console.log("Processingggg.......");
         axios.get(`api/courses/${this.course.id}/all`).then(res => {
             let data = res.data;
             console.log(data);
@@ -186,7 +190,8 @@ export default{
                             data.media.filter( ( e ) => {
                                 return e.media_type == "mp4" && e.topic_id == data.topics[i].topic_id;
                             }),
-                        type : "topic"
+                        type : "topic",
+                        quiz : data.topics[i].quiz
                     }
                     this.course.topics.push(topic);
                 }else{

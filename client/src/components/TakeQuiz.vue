@@ -81,6 +81,17 @@
             </div>
         </div>
     </div>
+
+    <div class = "next-button" v-if="showNext">
+        <router-link v-if="next.course_id"
+        :to="next.assignment ? ('/course/submitassignment?course=' + next.course_id + '&assignment=' + next.topic_id) : 
+            ('/course/complete?id=' + next.course_id + '&topic=' + next.topic_id)" 
+            class = "button solid white">
+            Next Topic
+        </router-link>
+
+    </div>
+
 </div>
 </template>
 
@@ -101,12 +112,33 @@ export default{
             courseSuggestions:[],
             gameSuggestions:[],
             showSuggestions:false,
+            course : {
+                id : 0,
+                topic_id : 0
+            },
+            showNext : false,
+            next : {
+                course_id : 0,
+                topic_id : 0,
+                assignment : 0
+            }
         }
     },
     mounted(){
         axios.get('api/quiz/quizdata/'+this.$route.query.id).then( response => {
             if(response.data!="error")
             {
+                if(response.data.length){
+                    this.course.id = response.data[0].course_id;
+                    this.course.topic_id = response.data[0].topic_id;
+                    console.log(this.course, "COURSE DATA")
+                    axios.get(`api/courses/next/${this.course.id}/${this.course.topic_id}`).then(
+                        res => {
+                            this.next = res.data;
+                            console.log(this.next)
+                        }
+                    )
+                }
                 let quiz=JSON.parse(response.data[0].quiz);
                 this.totalTime=quiz.totalTime;
                 for(let i=0;i<quiz.displayQus;i++)
@@ -194,6 +226,7 @@ export default{
                             {
                                 this.showSuggestions=true;
                             }
+                            this.showNext = true;
                         }
                     }).catch(err=>{
                         console.log(err);
@@ -226,6 +259,13 @@ export default{
             border-radius: 100px;
         }
     }
+
+    .next-button{
+        padding-bottom : 50px;
+        display: flex;
+        justify-content: center;
+    }
+
     .fail{
         min-height : 30px;
         background-color: #eb6a6a7a;

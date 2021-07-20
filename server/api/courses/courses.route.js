@@ -10,6 +10,7 @@ router.get('/categories', courses.categories);
 router.get('/:id', courses.get);
 //Get all Course Details Based on ID
 router.get('/:id/all', checkToken, courses.getFullCourse);
+router.get('/next/:course_id/:topic_id', checkToken, courses.getNext)
 
 /************ INSTRUCTOR ************/
 router.get('/for/instructor', checkToken, courses.getAllForInstructor);

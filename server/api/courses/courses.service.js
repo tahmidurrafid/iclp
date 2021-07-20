@@ -198,9 +198,12 @@ module.exports = {
         course = course[0];
 
         let topics = await query(`SELECT * FROM courseTopic WHERE course_id = ${data.course_id} ORDER BY topic_id ASC`)
+        let quiz = await query(`SELECT * FROM quiz WHERE course_id = ${data.course_id}`);
+        // console.log(quiz);
         course.topics = topics;
         course.topics.map( (e) => {
             e.type = "topic";
+            e.quiz = quiz.filter( q => q.topic_id == e.topic_id );
             return e;
         });
 
@@ -223,6 +226,7 @@ module.exports = {
         })
         course.media = media;
         course.categories = categories;
+
         return course;
 
     },
@@ -306,5 +310,25 @@ module.exports = {
     deleteAssignment : async (data, callback) => {
         res = query(`DELETE FROM assignment WHERE course_id = ${data.req.course_id} AND id = ${data.req.topic_id}`);
         callback(null, {success : 1});
+    },
+    getNext : (data, callback) => {
+        db.query(`(SELECT course_id, topic_id, 0 as assignment FROM courseTopic WHERE course_id = ${data.course_id}) UNION
+        (SELECT course_id, id as topic_id, 1 as assignment FROM assignment WHERE course_id = ${data.course_id})`, 
+            (err, res, fields) => {
+                res = res.filter( e => e.topic_id > data.topic_id);
+                res = res.sort((a, b) => a.topic_id - b.topic_id);
+                if(res.length) { 
+                    res = res[0];
+                }else{
+                    res = {
+                        course_id : 0,
+                        topic_id : 0,
+                        assignment : 0
+                    }
+                }
+                console.log(res);
+                callback(err , res);
+            }
+        )
     }
 };

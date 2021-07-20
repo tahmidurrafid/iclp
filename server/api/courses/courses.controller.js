@@ -291,6 +291,11 @@ module.exports = {
                 })
             }
         })
-    }
+    },
 
+    getNext : (req, res) => {
+        coursesService.getNext(req.params, (err, result) => {
+            res.json(result);
+        })
+    }
 }

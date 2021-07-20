@@ -39,6 +39,17 @@
                     <span>Upload File (.zip)</span>
                 </a>
             </div>
+
+            <div class = "next-button">
+                <router-link v-if="next.course_id"
+                :to="next.assignment ? ('/course/submitassignment?course=' + next.course_id + '&assignment=' + next.topic_id) : 
+                    ('/course/complete?id=' + next.course_id + '&topic=' + next.topic_id)" 
+                    class = "button solid white">
+                    Next Topic
+                </router-link>
+
+            </div>
+
         </div>
     </div>
 </template>
@@ -55,6 +66,11 @@ export default{
                 course_id : 0,
                 id : 0
             },
+            next : {
+                course_id : 0,
+                topic_id : 0,
+                assignment : 0
+            }
         }
     },
 
@@ -73,6 +89,12 @@ export default{
                         let x = this.details.submissions[i];
                         x.file_link = axios.defaults.baseURL + x.file_link;
                     }
+                    // console.log(this.details, "DETAILS");
+                    axios.get(`api/courses/next/${this.details.course_id}/${this.details.id}`).then(
+                        response => {
+                            this.next = response.data;
+                        }
+                    )
                 }
             }
         )
@@ -234,6 +256,11 @@ export default{
                         padding-right: 10px;                        
                     }
                 }
+            }
+            .next-button{
+                display: flex;
+                justify-content: center;
+                padding: 50px 0;
             }
         }
     }
