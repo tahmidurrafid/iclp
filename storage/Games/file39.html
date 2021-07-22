@@ -5,13 +5,14 @@
     <title>Swap Sort</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <style>
 
 html{
     height : 100%;
 }
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
 body{
     font-family: 'Pacifico', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -146,6 +147,13 @@ input{
     left : 0;
     bottom : 0;
     width : 10%
+}
+
+.bird.left img{
+    transform: scale(-1, 1);
+}
+.bird.right img{
+    transform: scale(1, 1);
 }
 
 .bird img{
@@ -284,8 +292,10 @@ $(document).ready(function(){
             $(".birds").append(`<div class = "bird">${birds[0]} <div class = "index">${i}</div></div>`);
             $(".birds .bird").eq(i).css("left", getLeft(i) + "%")
             $(".birds .bird").eq(i).css("width", (birdSet[i].height) + "%")
-            if(birdSet[i].turnRight == false){
-                $(".birds .bird img").eq(i).css("transform", "scale(-1, 1)")            
+            if(birdSet[i].turnRight){
+                $(".birds .bird").eq(i).removeClass("left").addClass("right");
+            }else{
+                $(".birds .bird").eq(i).removeClass("right").addClass("left");
             }
         }
     }
@@ -302,13 +312,13 @@ $(document).ready(function(){
             if(to > from){
                 birdSet[from].turnRight = true;
                 birdSet[to].turnRight = false;
-                $(".birds .bird img").eq(from).css("transform", "scale(1, 1)")                
-                $(".birds .bird img").eq(to).css("transform", "scale(-1, 1)")                
+                $(".birds .bird").eq(from).removeClass("left").addClass("right");                
+                $(".birds .bird").eq(to).removeClass("right").addClass("left");
             }else{
                 birdSet[from].turnRight = false;
                 birdSet[to].turnRight = true;
-                $(".birds .bird img").eq(from).css("transform", "scale(-1, 1)")                                
-                $(".birds .bird img").eq(to).css("transform", "scale(1, 1)")                              
+                $(".birds .bird").eq(from).removeClass("right").addClass("left");
+                $(".birds .bird").eq(to).removeClass("left").addClass("right");                           
             }
             let left = getLeft(from);
             let leftOp = getLeft(to);
