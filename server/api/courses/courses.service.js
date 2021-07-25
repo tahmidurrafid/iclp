@@ -6,8 +6,8 @@ const query = util.promisify(db.query).bind(db);
 
 module.exports = {
     getAll : (data, callback) => {
-        console.log(data.search)
         let categoryFilter = "";
+        let levelFilter = "";
         let searchString = "";
         let searchParams = [];
         if(data.search){
@@ -15,7 +15,7 @@ module.exports = {
             if(splits.length){
                 searchString = "AND ("
                 for(let i = 0; i < splits.length; i++){
-                    searchString += "c.title LIKE ? ";
+                    searchString += "CONCAT(c.title, ' ', c.brief) LIKE ? ";
                     if(i != splits.length - 1){
                         searchString += "OR ";
                     }else{
@@ -28,7 +28,7 @@ module.exports = {
         }
         console.log(searchString);
         if(data.category && data.category.length){
-            categoryFilter = "AND c.category IN (";
+            categoryFilter = "AND cc.category_id IN (";
             for(let i = 0; i < data.category.length; i++){
                 categoryFilter += data.category[i];
                 if(i != data.category.length -1){
@@ -38,13 +38,29 @@ module.exports = {
             categoryFilter += ")";
             console.log(categoryFilter);
         }
-        db.query(`SELECT c.id as id,
+
+        if(data.level && data.level.length){
+            levelFilter = "AND cc.level IN (";
+            for(let i = 0; i < data.level.length; i++){
+                levelFilter += data.level[i];
+                if(i != data.level.length -1){
+                    levelFilter += ', ';
+                }
+            }
+            levelFilter += ")";
+            console.log(levelFilter);
+        }
+
+        db.query(`SELECT DISTINCT(c.id) as id,
                         c.title as title,
                         c.category as category,
-                        c.brief as brief
-                        FROM course c
+                        c.brief as brief, 
+                            (SELECT AVG(r.rating) FROM review r WHERE 
+                            r.course_id = c.id
+                            ) as rating
+                        FROM course c JOIN courseCategory cc ON (c.id = cc.course_id)
                         WHERE 1 = 1
-                        ${categoryFilter} ${searchString}
+                        ${categoryFilter} ${levelFilter} ${searchString}
                         `,
                         searchParams,
 
@@ -255,13 +271,25 @@ module.exports = {
         )
     },
     categories : (data, callback) => {
-        db.query(`SELECT *, 
-                        (SELECT count(*) FROM course WHERE course.category = cat.id) as count
-                FROM category cat`,
+        db.query(`SELECT *, (SELECT count(*) FROM courseCategory WHERE category_id = cat.id) as count, 
+        (SELECT cs.skill FROM categorySkill cs WHERE cs.category_id = cat.id AND cs.user_id = ${data.user.result.id}) as skill
+        FROM category cat`,
             (error, results, fields) => {
                 if(error){
                     return callback(error);
                 }else{
+                    results = results.map( e => {
+                        if(e.skill != null){
+                            if(e.skill.charAt(0) == 'b'){
+                                e.skill = 1;
+                            }else if(e.skill.charAt(0) == 'i'){
+                                e.skill = 2;
+                            }else if(e.skill.charAt(0) == 'a'){
+                                e.skill = 3;
+                            }
+                        }
+                        return e
+                    })
                     return callback(null, results);
                 }
             }
@@ -329,6 +357,36 @@ module.exports = {
                 console.log(res);
                 callback(err , res);
             }
+        )
+    },
+    review : (data, callback) => {
+        console.log(data);
+        query(`DELETE FROM review WHERE course_id = ${data.id} AND user_id = ${data.user.id}`);
+        db.query(`INSERT INTO review(course_id, user_id, rating, review) VALUES(?, ?, ?, ?)`,
+            [data.id, data.user.id, data.rating, data.review],
+            (err, res, fields) => {
+                if(err)
+                    console.log(err);
+                callback(err, res);
+            }
+        )
+        console.log(data);
+    },
+
+    getReviews : (data, callback) => {
+        console.log(data.user.id);
+        db.query(`SELECT r.rating,
+        r.review,
+        c.id,
+        u2.name as name
+
+        FROM review r JOIN course c ON ( c.id = r.course_id ) 
+        JOIN user u on (u.id = c.instructor_id)
+        JOIN user u2 on(u2.id = r.user_id)
+        WHERE u.id = ${data.user.id}`, 
+        (err, res, fields) => {
+            callback(err, res);
+        }
         )
     }
 };

@@ -23,6 +23,10 @@
                                 <span>Enroll Course</span>
                                 <span class = "count"  v-if="activePart==='EnrollCourse'"><i class="fa fa-check-circle"></i></span>
                             </div>
+                            <div class = "list-item link" @click="activePart='reviewCourse'">
+                                <span>Review Course</span>
+                                <span class = "count"  v-if="activePart==='reviewCourse'"><i class="fa fa-check-circle"></i></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -129,14 +133,26 @@
                                     </div>
                                 </div>
                             </router-link>
-                            <!-- <router-link to = "">
-                                <div class="saveButton">
-                                    <div>Save For Later</div>
-                                    <div>
-                                        <i class="fa fa-bookmark-o"></i>
-                                    </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="reviewCourse" v-if="activePart==='reviewCourse'">
+                <div class="wrap">
+                    <div class="title"><span class="marker"></span><span class="text">Review</span></div>
+                    <div class="content">
+                        <div class="rating">
+                            <i v-for="i in 5" v-bind:key="i" class = "fa" 
+                            :class="i <= rating ? 'fa-star' : 'fa-star-o'" @click="changeRating(i)"></i>
+                        </div>
+                        <textarea class = "review" v-model="review" placeholder="Your review Here..."></textarea>
+                        <div class="buttons">
+                            <div class="enrollButton" @click="submitReview()">
+                                <div>Submit</div>
+                                <div>
+                                    <i class="fa fa-chevron-circle-right"></i>
                                 </div>
-                            </router-link> -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,7 +173,9 @@ export default{
             details : {
             },
             isEnrolled : false,
-            loading : true
+            loading : true,
+            rating : 4,
+            review : ""
         }
     },
     mounted(){
@@ -188,6 +206,22 @@ export default{
                     this.isEnrolled = true;
                 }
             })
+        },
+        changeRating : function(index){
+            this.rating = index;
+        },
+        submitReview : function(){
+            axios.post('api/courses/review', 
+                {
+                    rating : this.rating, 
+                    review : this.review,
+                    id : this.details.id
+                } 
+                ).then(
+                res => {
+                    console.log(res);
+                }
+            )
         }
     }
 };
@@ -566,5 +600,86 @@ export default{
                     }
                 }
         }
+
+        .reviewCourse{
+            text-align: left;
+            width: 70%;
+            padding : 0 0 0 50px;
+                .wrap{
+                    border: solid 3px #E9E9E9;
+                    padding : 22px 50px 22px 70px;
+                    box-sizing: border-box;
+                    .rating{
+                        i{
+                            color: $orange;
+                            font-size: $font20;
+                            padding-right: 10px;
+                            transition : transform .3s;
+                            &:hover{
+                                transform: scale(1.2);
+                            }
+                        }
+                    }
+                    .review{
+                        display: block;
+                        box-sizing: border-box;
+                        width : 100%;
+                        margin-top : 20px;
+                        padding : 15px;
+                    }
+
+
+                    .title{
+                        position : relative;
+                        .marker{
+                            position : absolute;
+                            top : calc(50% - 2px);
+                            left : -40px;
+                        }
+                        font-size: 18px;
+                        font-weight: 600;
+                        padding : 5px 0;
+                    }
+                    .content{
+                        padding : 5px 0;
+                        margin-top: 20px;
+                        .enrollText{
+                            font-size: 18px;
+                            padding : 5px 0;
+                            margin-top: 20px;
+                            width: 100%;
+                        }
+                        .buttons{
+                            display: flex;
+                            justify-content: space-between;
+                            padding : 5px 0;
+                            margin-top: 50px;
+                            font-size: 18px;
+                            min-width: 310px;
+                            max-width: 450px;
+                            .enrollButton{
+                                width: 140px;
+                                background-color: #FC5A34;
+                                font-weight: bold;
+                                padding : 7px 20px;
+                                display: flex;
+                                justify-content: space-between;
+                                color : white;
+                                cursor: pointer;
+                            }
+                            .saveButton{
+                                width: 170px;
+                                background-color: rgba(240, 240, 240, 0.521);
+                                color: #FC5A34;
+                                font-weight: bold;
+                                padding : 7px 20px;
+                                display: flex;
+                                justify-content: space-between;
+                            }
+                        }
+                    }
+                }
+        }
+
     }
 </style>

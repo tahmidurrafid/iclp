@@ -83,14 +83,15 @@
                     <hr class="horizontalLine">
                     <div class="course-list">
                         <div v-for = "(item, i) in reviews" v-bind:key="i" class="list-item">
-                            <span class="courseID">Course ID : {{item.courseID}}</span>
+                            <span class="courseID">Course ID : {{item.id}}</span>
                             <span class="review">
                                 <span class="image"><img src="../assets/blankprofilepicture.png"></span>
                                 <span class="review-details">
                                      <div class="reviewer">{{item.name}}</div>
-                                     <div class="review-description">{{item.description}}</div>
+                                     <div class="review-description">{{item.review}}</div>
                                      <div class = "rating">
-                                         <i v-for="n in 5" v-bind:key="n" class = "fa fa-star"></i>
+                                         <i v-for="n in 5" v-bind:key="n" class = "fa"
+                                         :class="n <= item.rating? 'fa-star' : 'fa-star-o'"></i>
                                      </div>
                                 </span>
                             </span>
@@ -140,6 +141,9 @@ export default{
             this.assignments = res.data;
             console.log(this.assignments)
         });
+        axios.get('api/courses/instructor/reviews').then(res => {
+            this.reviews = res.data
+        })
     },
     methods : {
         updateMark : function(item){

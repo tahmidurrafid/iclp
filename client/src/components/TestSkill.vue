@@ -61,6 +61,7 @@ export default{
         }
     },
     mounted(){
+        console.log(this.userId, "DONE")
         axios.get('api/quiz/categoryquizdata/'+this.$route.query.id).then( response => {
             if(response.data!="error")
             {
@@ -139,7 +140,7 @@ export default{
                 this.skill="beginner";
             }
             let quizResult={ 
-                userId:7,
+                userId: this.$login.user.id,
                 categoryId:this.$route.query.id,
                 skill:this.skill
             }

@@ -5,7 +5,7 @@ const {checkToken} = require("../../auth/token");
 //Get All Course
 router.get('/', courses.getAll);
 //Get all course Categories
-router.get('/categories', courses.categories);
+router.get('/categories', checkToken, courses.categories);
 //Get Course Based on ID
 router.get('/:id', courses.get);
 //Get all Course Details Based on ID
@@ -28,9 +28,12 @@ router.post('/assignment', checkToken, courses.saveAssignment);
 router.delete('/:course_id/topic/:topic_id', checkToken, courses.deleteTopic);
 //Delete course topic
 router.delete('/:course_id/assignment/:topic_id', checkToken, courses.deleteAssignment);
+router.get('/instructor/reviews', checkToken , courses.getReviews);
 
 /************ USER ************/
 router.post('/enroll/:id', checkToken, courses.enroll)
 router.get('/enrolled/:id', checkToken,  courses.enrolled )
 router.get('/for/user', checkToken, courses.getAllForUser);
+router.post('/review', checkToken, courses.review);
+
 module.exports = router

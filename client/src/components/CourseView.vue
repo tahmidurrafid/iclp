@@ -17,9 +17,23 @@
                         <div v-for = "(item, i) in categories" v-bind:key="i"
                         class = "list-item" 
                         v-bind:class="{'selected' : (selected_category.includes(item.id))}" 
-                        @click="updateQuery(item.id)">
+                        @click="updateCategory(item.id)">
                             <span class = "caption">{{item.value}}</span>
                             <span class = "count">{{item.count}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class = "item">
+                <div class = "wrap">
+                    <div class = "heading"><span class = "marker"></span><span class = "text">Levels</span></div>
+                    <div class = "list">
+                        <div v-for = "(item, i) in levels" v-bind:key="i"
+                        class = "list-item" 
+                        v-bind:class="{'selected' : (selected_level.includes(item.id))}" 
+                        @click="updateLevel(item.id)">
+                            <span class = "caption">{{item.level}}</span>
+                            <!-- <span class = "count">-</span> -->
                         </div>
                     </div>
                 </div>
@@ -28,6 +42,11 @@
 
         <div class = "courseItems">
             <div class = "heading">Recommended Course For You</div>
+
+            <div class = "take-quiz" v-if="categories.length && categoryQuiz && selected_category.length">
+                <div class = "message">Want to test your skill? </div>
+                <router-link :to="'/testSkill?id=' + quizCategory " class = "click">Click Here</router-link>
+            </div>
 
             <div class = "course-list">
 
@@ -45,7 +64,8 @@
                                 <span>378</span><i class = "fa fa-heart-o"></i>
                             </div>
                             <div class = "rating">
-                                <i v-for="n in 5" v-bind:key="n" class = "fa fa-star"></i>
+                                <i v-for="n in 5" v-bind:key="n" class = "fa"
+                                :class="n <= course.rating ? 'fa-star' : 'fa-star-o'"></i>
                             </div>
                         </div>
                         <div class = "line">
@@ -67,13 +87,19 @@ export default{
         return{
             categories : [
             ],
-
+            levels : [
+                {level : 'Beginner', id : 1},
+                {level : 'Intermediate', id : 2},
+                {level : 'Advanced', id : 3}
+            ],
             selected_category : [],
+            selected_level : [],
             search : "",
             courses : [
-
             ],
-            courseLoading : true
+            courseLoading : true,
+            categoryQuiz : false,
+            quizCategory : 0
         }
     },
     mounted(){
@@ -87,33 +113,71 @@ export default{
             }
         }
         axios.get('api/courses', {params : this.$route.query}).then( response => {
-            this.courses = response.data;
+            this.courses = response.data.map( e => {
+                if(e.rating == null){
+                    e.rating = 0;
+                }
+                return e;
+            });
+            console.log(this.courses);
             this.courseLoading = false;
         });
         axios.get('api/courses/categories').then( response => {
             this.categories = response.data;
+            console.log(this.categories , "categories")
         })
     },
     methods : {
-        updateQuery : function(id){
+        updateQuery : function(){
             let query = {};
+
+            query.category = this.selected_category;            
+            query.search = this.search;
+            query.level = this.selected_level;
+            this.$router.push({query : query });
+            this.courseLoading = true;
+            axios.get('api/courses', {params : this.$route.query}).then( response => {
+                this.courses = response.data;
+                this.courseLoading = false;
+            });
+        },
+        updateLevel : function(id){
+            if(id){
+                if(this.selected_level.includes(id)){
+                    this.selected_level.splice(this.selected_level.findIndex(
+                        (elem) => elem.id == id
+                    ), 1)
+                }else{
+                    this.selected_level = [];
+                    this.selected_level.push(id)
+                }
+            }
+            this.updateQuery();
+        },
+        updateCategory : function(id){
             if(id){
                 if(this.selected_category.includes(id)){
                     this.selected_category.splice(this.selected_category.findIndex(
                         (elem) => elem.id == id
                     ), 1)
                 }else{
+                    this.selected_category = [];
                     this.selected_category.push(id)
                 }
             }
-            query.category = this.selected_category;            
-            query.search = this.search;
-            this.$router.push({query : query });
-            this.courseLoading = true;
-            axios.get('api/courses', {params : this.$route.query}).then( response => {
-                this.courses = response.data;
-                this.courseLoading = false;                
-            });
+            this.categoryQuiz = false;            
+            if(this.selected_category.length){
+                let selected = this.categories.filter( e => e.id == this.selected_category[0]);
+                if(selected[0].quiz != null && selected[0].skill == null){
+                    this.categoryQuiz = true;
+                    this.quizCategory = this.selected_category[0];
+                }
+                if(selected[0].skill != null){
+                    this.selected_level = [selected[0].skill];
+                }
+                // console.log(selected.quiz, selected.skill, this.categoryQuiz)
+            }
+            this.updateQuery();
         }
     }
 };
@@ -146,7 +210,7 @@ export default{
         box-sizing: border-box;
         padding : 70px 70px 0;
         .leftBar{
-            width : 25%;
+            width : 27%;
             .item{
                 padding-bottom: 30px;
                 .wrap{
@@ -239,12 +303,33 @@ export default{
 
         .courseItems{
             text-align: left;
-            flex-grow: 1;
+            /* flex-grow: 1; */
+            width : 73%;
             padding : 0 0 0 50px;
             .heading{
                 font-weight: 600;
                 font-size: 29px;
                 padding-bottom: 30px;
+            }
+
+            .take-quiz{
+                border: solid 3px #E9E9E9;
+                padding : 20px 50px;
+                box-sizing: border-box;
+                display: flex;
+                font-size: $font20;
+                margin-bottom: 50px;
+                .message{
+                    font-weight: $medium;
+                }
+                .click{
+                    background-color: $orange;
+                    font-size: $font15;
+                    display: flex;
+                    align-items: center;
+                    padding : 5px 10px;
+                    margin-left: 30px;
+                }
             }
 
             .course-list{

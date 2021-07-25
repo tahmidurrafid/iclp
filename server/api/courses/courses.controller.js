@@ -7,6 +7,7 @@ const { response } = require("express");
 
 module.exports = {
     getAll: (req, res) => {
+        console.log(req.query);
         coursesService.getAll(req.query, (err, results) => {
             if (err) {
                 res.send("Error ase");
@@ -297,5 +298,35 @@ module.exports = {
         coursesService.getNext(req.params, (err, result) => {
             res.json(result);
         })
+    },
+    review : (req, res) => {
+        let data = req.body;
+        data.user = req.user.result;
+        coursesService.review(req.body, (err, result) => {
+            if(err){
+                res.json({
+                    success : 0
+                })
+            }else{
+                res.json({
+                    success : 1
+                })
+            }
+        });
+    },
+
+    getReviews : (req, res) => {
+        let data = {
+            user : req.user.result
+        }
+        coursesService.getReviews( data, (err, result) => {
+            if(err){
+                res.json({
+                    success : 0
+                })
+            }else{
+                res.json(result);
+            }
+        } )
     }
 }
