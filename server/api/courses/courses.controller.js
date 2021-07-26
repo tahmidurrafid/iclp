@@ -63,11 +63,12 @@ module.exports = {
         coursesService.create(req, (err, results)=> {
             if(!err){
                 res.json({
-                    success : 1
+                    success : 1,
+                    id : results.id                    
                 })
             }else{
                 res.json({
-                    success : 0
+                    success : 0,
                 })
             }         
         });

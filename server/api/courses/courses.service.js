@@ -167,7 +167,8 @@ module.exports = {
                     console.log(err);
                 else 
                     console.log("success");
-                return callback(err, result);
+                console.log(result);
+                return callback(err, {id : result.insertId});
             }
         )
         

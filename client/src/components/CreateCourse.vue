@@ -74,7 +74,7 @@
                             <div class = "quiz-button">
                                 <router-link :to="'/setquiz?courseID=' + course.id + '&topicID=' + topic.id" 
                                 class = "button solid white small" target="_blank">
-                                    {{topic.quiz.length? 'Update' : 'Set'}} Quiz
+                                    {{topic.quiz && topic.quiz.length? 'Update' : 'Set'}} Quiz
                                 </router-link>
                             </div>
                         </div>
@@ -145,9 +145,9 @@ export default{
                 level : 1,
                 categories : [],
                 topics : [
-                    {
-                        quiz : []
-                    }
+                    // {
+                    //     quiz : []
+                    // }
                 ]
             },
             selected : -1,
@@ -332,8 +332,10 @@ export default{
         createCourse : function(){
             this.saving = true;
             axios.post("api/courses/create", this.course).then(
-                () => {
+                (res) => {
                     this.saving = false;
+                    console.log(res.data);
+                    this.course.id = res.data.id
                 }
             )
         },
