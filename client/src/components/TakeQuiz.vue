@@ -206,7 +206,7 @@ export default{
                 }
             }
             let quizResult={ 
-                userId:7,
+                userId:this.$login.user.id,
                 quizId:this.$route.query.id,
                 obtainedMark:this.obtainedmark
             }
