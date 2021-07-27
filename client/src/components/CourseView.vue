@@ -168,7 +168,7 @@ export default{
             this.categoryQuiz = false;            
             if(this.selected_category.length){
                 let selected = this.categories.filter( e => e.id == this.selected_category[0]);
-                if(selected[0].quiz != null && selected[0].skill == null){
+                if(selected[0].quiz != null){
                     this.categoryQuiz = true;
                     this.quizCategory = this.selected_category[0];
                 }

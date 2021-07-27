@@ -22,7 +22,7 @@
                         <option v-for="item in categories" v-bind:key="item.id" :value="item.id"> {{item.value}} </option>
                     </select>
                     <select class = "level" v-model="course.level">
-                        <option v-for="i in 5" v-bind:key="i">{{i}}</option>
+                        <option v-for="i in 3" v-bind:key="i">{{i}}</option>
                     </select>
                     <div class = "button solid white small" @click="addCategory()">
                         Add
