@@ -53,9 +53,7 @@ export default{
             menu : [
                 {link : '/', caption : 'Home'},
                 {link : '/course', caption : 'Courses'},
-                {link : '#', caption : 'challenges'},
-                {link : '#', caption : 'Playground'},
-                {link : '#', caption : 'Blog'}
+                {link : '/playground', caption : 'Playground'},
             ],
             login : {
                 status : false,
