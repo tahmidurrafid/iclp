@@ -69,7 +69,11 @@
                                     <span class = "total">/ {{item.total_mark}} </span>
                                 </div>
                                 <div class = "grade_action">
-                                    <div class = "button solid small white" @click="updateMark(item)">Grade</div>
+                                    <div v-if="item.loading" class = "loader-small">
+                                        <div class = "loading"></div>
+                                    </div>
+
+                                    <div class = "button solid small white" @click="updateMark(item, i)">Grade</div>
                                 </div>
                             </div>
                             <hr class="horizontalLine">
@@ -138,18 +142,26 @@ export default{
                 if(res.data[i].mark == -1)
                     res.data[i].mark = null;
             }
+
+            for(let i = 0; i < res.data.length; i++){
+                res.data[i].loading = false;
+            }
+
             this.assignments = res.data;
-            console.log(this.assignments)
+            console.log(this.assignments, "assignment")
         });
         axios.get('api/courses/instructor/reviews').then(res => {
             this.reviews = res.data
         })
     },
     methods : {
-        updateMark : function(item){
+        updateMark : function(item, index){
+            this.assignments[index].loading = true;
+            console.log(this.assignments[index].loading)
             axios.put(`api/assignment/mark/${item.submission_id}`, item).then(
                 res => {
                     console.log(res);
+                    this.assignments[index].loading = false;                    
                 }
             )
         }
@@ -165,6 +177,14 @@ export default{
         padding : 100px 0;
         .loading{
             @include loader;
+            margin : auto;
+        }
+    }
+    .loader-small{
+        padding-right: 10px;
+        /* padding : 100px 0; */
+        .loading{
+            @include loader-small;
             margin : auto;
         }
     }
@@ -376,7 +396,7 @@ export default{
                                     }
                                 }
                                 .grade_action{
-
+                                    display: flex;
                                 }
                                 /* .grade */
                             }

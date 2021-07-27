@@ -80,27 +80,32 @@ export default{
         }
         this.details.course_id = this.$route.query.course;
         this.details.assignment_id = this.$route.query.assignment;
-        axios.get(`api/assignment/${this.$route.query.course}/${this.$route.query.assignment}`).then(
-            (res) => {
-                if(res.data && res.data.success != 0){
-                    this.details = res.data;
-                    this.details.file_link = axios.defaults.baseURL + this.details.file_link;
-                    for(let i in this.details.submissions){
-                        let x = this.details.submissions[i];
-                        x.file_link = axios.defaults.baseURL + x.file_link;
-                    }
-                    // console.log(this.details, "DETAILS");
-                    axios.get(`api/courses/next/${this.details.course_id}/${this.details.id}`).then(
-                        response => {
-                            this.next = response.data;
-                        }
-                    )
-                }
-            }
-        )
+        this.init();
     },
 
     methods : {
+        
+        init : function(){
+            axios.get(`api/assignment/${this.$route.query.course}/${this.$route.query.assignment}`).then(
+                (res) => {
+                    if(res.data && res.data.success != 0){
+                        this.details = res.data;
+                        this.details.file_link = axios.defaults.baseURL + this.details.file_link;
+                        for(let i in this.details.submissions){
+                            let x = this.details.submissions[i];
+                            x.file_link = axios.defaults.baseURL + x.file_link;
+                        }
+                        axios.get(`api/courses/next/${this.details.course_id}/${this.details.id}`).then(
+                            response => {
+                                this.next = response.data;
+                            }
+                        )
+                    }
+                }
+            );
+
+        },
+
         fileChanged : function(event){
             if(event.target.files.length == 0){
                 return;
@@ -127,6 +132,7 @@ export default{
                 }
             }).then( res => {
                 console.log(res);
+                this.init();
             })
         }
     }
