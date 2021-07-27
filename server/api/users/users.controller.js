@@ -35,7 +35,7 @@ module.exports = {
                 })
             }else{
                 const jsontoken = sign({ result: results[0] }, "iclptoken", {
-                    expiresIn: "1h"
+                    expiresIn: "365d"
                 });
                 res.json({
                     success : 1,
