@@ -60,7 +60,6 @@ export default{
             login : {
                 status : false,
                 user : {
-                    
                 }
             },
             dropdown : false

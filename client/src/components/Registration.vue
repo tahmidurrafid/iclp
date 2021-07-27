@@ -34,6 +34,10 @@
                     <div class = "elem">
                         <input type = "text" name = "phoneNo" v-model="form.phone" placeholder="Phone No." />
                     </div>
+                    
+                    <div class = "elem instructor">
+                        <input type="checkbox" v-model="form.instructor"/> <span>Check if you are an instructor.</span>
+                    </div>
 
                     <div class = "line">
                         <div class = "elem half">
@@ -56,6 +60,7 @@ export default {
         return {
             form : {
                 email : '',
+                instructor : false,
             }
         }
     },
@@ -67,8 +72,8 @@ export default {
                 .then((response) => {
                     console.log(response);
                     this.$router.push("/login")
-                })
-        }
+            })
+        },
     }
 }
 </script>
@@ -77,5 +82,10 @@ export default {
     @import "../scss/_auth.scss";
     #registration input, select{
         text-align: left;
+    }
+    .elem.instructor{
+        text-align: left;            
+        display: flex;
+        align-items: center;
     }
 </style>

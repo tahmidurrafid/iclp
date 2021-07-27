@@ -2,9 +2,10 @@ const db = require('../../db/index');
 
 module.exports = {
     create : (data, callback) => {
-        db.query(`insert into user(name, email, password, dateofbirth, phone, country, address) 
-                Values(?, ?, ?, ?, ?, ?, ?)`,
-            [data.name, data.email, data.password, data.dateofbirth, data.phone, data.country, data.address],
+        db.query(`insert into user(name, email, password, dateofbirth, phone, country, address, type) 
+                Values(?, ?, ?, ?, ?, ?, ?, ?)`,
+            [data.name, data.email, data.password, data.dateofbirth, data.phone, data.country, data.address,
+            data.instructor ? 'instructor': 'user' ],
             (error, results, fields) => {
                 if(error){
                     return callback(error);

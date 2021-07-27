@@ -32,7 +32,7 @@
                             <span class="courseID">Course ID : {{item.id}}</span>
                             <span class="courseTitle">
                                 <span class="course-title">{{item.title}}</span>
-                                <router-link class = "button" :to = "'/course/complete?id=' + item.id">View</router-link>
+                                <router-link class = "button" :to = "'/courseBrief?id=' + item.id">View</router-link>
                             </span>
                             <hr class="horizontalLine">
                         </div>
