@@ -32,7 +32,10 @@
                             <span class="courseID">Course ID : {{item.id}}</span>
                             <span class="courseTitle">
                                 <span class="course-title">{{item.title}}</span>
-                                <router-link class = "button" :to = "'/courseBrief?id=' + item.id">View</router-link>
+                                <div class = "btns">
+                                    <router-link class = "button" :to = "'/course/details?id=' + item.id">Details</router-link>
+                                    <router-link class = "button" :to = "'/courseBrief?id=' + item.id">Contents</router-link>
+                                </div>
                             </span>
                             <hr class="horizontalLine">
                         </div>
@@ -261,6 +264,12 @@ export default{
                                     color: #707070;
                                     font-weight: 600;
                                 }
+                                .btns{
+                                    display: flex;
+                                    &>*{
+                                        margin-left: 10px;
+                                    }
+                                }
                                 .button{
                                     cursor: pointer;
                                     height: 35px;
@@ -271,6 +280,7 @@ export default{
                                     justify-content: center;
                                     align-items: center;
                                     border-radius: 5px;
+
                                 }
                             }
                         }
