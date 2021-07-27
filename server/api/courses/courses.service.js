@@ -133,19 +133,18 @@ module.exports = {
 
         console.log(data.body);
 
-        query(`DELETE FROM courseCategory WHERE course_id = ${data.body.id}`);
-
-        let categoryQueryString = `INSERT INTO courseCategory(course_id, category_id, level) VALUES`;
-        for(let i = 0; i < data.body.categories.length; i++){
-            let cat = data.body.categories[i];
-            categoryQueryString += `(${data.body.id}, ${cat.id}, ${cat.level})`;
-            if(i < data.body.categories.length-1)
-                categoryQueryString += ', ';
-        }
-        if(data.body.categories.length){
-            console.log(categoryQueryString);
-            query(categoryQueryString);
-        }
+        // query(`DELETE FROM courseCategory WHERE course_id = ${data.body.id}`);
+        // let categoryQueryString = `INSERT INTO courseCategory(course_id, category_id, level) VALUES`;
+        // for(let i = 0; i < data.body.categories.length; i++){
+        //     let cat = data.body.categories[i];
+        //     categoryQueryString += `(${data.body.id}, ${cat.id}, ${cat.level})`;
+        //     if(i < data.body.categories.length-1)
+        //         categoryQueryString += ', ';
+        // }
+        // if(data.body.categories.length){
+        //     console.log(categoryQueryString);
+        //     query(categoryQueryString);
+        // }
 
         let queryString = `INSERT INTO course(title, brief, instructor_id, category) 
         VALUES(?, ?, ?, ?)`;
@@ -163,10 +162,24 @@ module.exports = {
         db.query( queryString,
             param,
             (err, result, field) => {
-                if(err)
+                if(err){
                     console.log(err);
-                else 
+                }else{ 
                     console.log("success");
+                    data.body.id = result.insertId;
+                    query(`DELETE FROM courseCategory WHERE course_id = ${data.body.id}`);
+                    let categoryQueryString = `INSERT INTO courseCategory(course_id, category_id, level) VALUES`;
+                    for(let i = 0; i < data.body.categories.length; i++){
+                        let cat = data.body.categories[i];
+                        categoryQueryString += `(${data.body.id}, ${cat.id}, ${cat.level})`;
+                        if(i < data.body.categories.length-1)
+                            categoryQueryString += ', ';
+                    }
+                    if(data.body.categories.length){
+                        console.log(categoryQueryString);
+                        query(categoryQueryString);
+                    }
+                }
                 console.log(result);
                 return callback(err, {id : result.insertId});
             }
