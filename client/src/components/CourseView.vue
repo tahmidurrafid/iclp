@@ -19,7 +19,7 @@
                         v-bind:class="{'selected' : (selected_category.includes(item.id))}" 
                         @click="updateCategory(item.id)">
                             <span class = "caption">{{item.value}}</span>
-                            <span class = "count">{{item.count}}</span>
+                            <!-- <span class = "count">{{item.count}}</span> -->
                         </div>
                     </div>
                 </div>
