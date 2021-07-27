@@ -45,9 +45,7 @@
                     </div>
                     <br>
                     <div class = "line">
-                        <div class = "upvote">
-                            <span>378</span><i class = "fa fa-heart-o"></i>
-                        </div>
+
                         <div class = "rating">
                             <span>Rating  </span>
                             <i v-for="n in 5" v-bind:key="n" class = "fa fa-star"></i>
@@ -85,8 +83,8 @@
                         <div v-for = "(item, i) in details.topics" v-bind:key="i" class = "list-item" @click="item.shouldExpand=!item.shouldExpand">
                             <div class="contentTitle">
                                 <span>{{item.title}}</span>
-                                <span class = "count" v-if="!item.shouldExpand"><i class="fa fa-chevron-circle-up"></i></span>
-                                <span class = "count" v-if="item.shouldExpand"><i class="fa fa-chevron-circle-down"></i></span>
+                                <!-- <span class = "count" v-if="!item.shouldExpand"><i class="fa fa-chevron-circle-up"></i></span>
+                                <span class = "count" v-if="item.shouldExpand"><i class="fa fa-chevron-circle-down"></i></span> -->
                             </div>
                         </div>
                     </div>
@@ -183,6 +181,7 @@ export default{
             response => {
                 this.details = response.data[0];
                 this.loading = false;
+                console.log(this.details)
             }
         )
 
