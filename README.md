@@ -58,3 +58,7 @@ cd client
 npm install
 node run serve
 ```
+
+<br/><br/>
+
+<img src="https://raw.githubusercontent.com/tahmidurrafid/iclp/master/UI/demo.gif" width="700">
