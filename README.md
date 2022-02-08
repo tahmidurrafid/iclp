@@ -1,4 +1,4 @@
-# Interactive Code Learnign Platform
+# Interactive Code Learning Platform
 
 Our primary idea is to develop a learning platform where students can learn in an interactive manner. In this app, there will be games, quizes, videos and other possible ways of interaction to keep the attention of the user.
 
